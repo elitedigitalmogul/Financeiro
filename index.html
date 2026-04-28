@@ -169,6 +169,11 @@ function save(){
 // ADD TRANSAÇÃO
 function add(){
     let m = mes();
+
+    if(!m){
+        m = new Date().toISOString().slice(0,7);
+    }
+
     let n = $("nome").value;
     let v = parseFloat($("valor").value);
     let c = $("cat").value;
