@@ -152,9 +152,16 @@ const $ = id => document.getElementById(id);
 $("mes").value = new Date().toISOString().slice(0,7);
 
 function mes(){
-    return $("mes").value || new Date().toISOString().slice(0,7);
-}
 
+    let m = $("mes").value;
+
+    if(!m){
+        m = new Date().toISOString().slice(0,7);
+        $("mes").value = m;
+    }
+
+    return m;
+}
 function save(){
     localStorage.setItem("finpro", JSON.stringify(db));
 }
