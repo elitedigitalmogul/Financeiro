@@ -1,235 +1,243 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance PRO | Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance PRO | Dashboard</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <!-- ✔ CORREÇÃO: Chart.js correto -->
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+    --bg:#0f172a;
+    --card:#1e293b;
+    --primary:#10b981;
+    --danger:#ef4444;
+    --text:#f8fafc;
+    --dim:#94a3b8;
+}
 
-    <style>
-        :root {
-            --bg: #0f172a;
-            --card: #1e293b;
-            --primary: #10b981;
-            --danger: #ef4444;
-            --text: #f8fafc;
-            --dim: #94a3b8;
-            --accent: #6366f1;
-        }
+*{margin:0;padding:0;box-sizing:border-box;}
 
-        * { margin: 0; padding: 0; box-sizing: border-box; transition: all 0.3s ease; }
-        
-        body { 
-            background: var(--bg); 
-            color: var(--text); 
-            font-family: 'Segoe UI', Roboto, sans-serif; 
-            padding: 20px; 
-        }
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:sans-serif;
+    padding:20px;
+}
 
-        .container { max-width: 1000px; margin: auto; }
-        
-        .card { 
-            background: var(--card); 
-            padding: 20px; 
-            border-radius: 16px; 
-            margin-bottom: 20px; 
-            box-shadow: 0 4px 6px -1px rgba(0,0,0,0.1);
-            border: 1px solid rgba(255,255,255,0.05);
-        }
+.container{max-width:1000px;margin:auto;}
 
-        h3 { margin-bottom: 15px; font-size: 0.9rem; color: var(--dim); text-transform: uppercase; letter-spacing: 1px; }
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:20px;
+}
 
-        .grid-form { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; }
-        
-        input, select, button { 
-            padding: 12px; border-radius: 10px; border: 1px solid #334155; 
-            background: #0f172a; color: white; outline: none;
-        }
+.grid-form{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;
+}
 
-        input:focus { border-color: var(--primary); }
+input,select,button{
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:#fff;
+}
 
-        button { 
-            background: var(--primary); cursor: pointer; font-weight: bold; color: #fff; border: none;
-        }
+button{background:var(--primary);border:none;cursor:pointer;}
 
-        button:hover { filter: brightness(1.2); transform: translateY(-2px); }
+.kpi-group{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
 
-        .kpi-group { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; }
-        .kpi { padding: 15px; border-radius: 12px; background: rgba(255,255,255,0.03); }
-        .kpi span { display: block; font-size: 1.5rem; font-weight: bold; margin-top: 5px; }
-        .val-e { color: var(--primary); }
-        .val-s { color: var(--danger); }
+.item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    border-bottom:1px solid #334155;
+}
 
-        .item { 
-            display: flex; justify-content: space-between; align-items: center;
-            padding: 12px; border-bottom: 1px solid #334155; 
-        }
-        .item:last-child { border: none; }
-        .btn-del { background: none; color: var(--danger); border: none; font-size: 1.2rem; margin-left: 10px; }
+.btn-del{
+    background:none;
+    border:none;
+    color:var(--danger);
+    cursor:pointer;
+}
 
-        .charts { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
-        @media (max-width: 768px) { .charts { grid-template-columns: 1fr; } }
-
-        .score-badge { font-size: 0.8rem; padding: 4px 8px; border-radius: 20px; background: var(--accent); }
-    </style>
+</style>
 </head>
+
 <body>
 
 <div class="container">
 
-    <div class="card">
-        <h3>Nova Transação</h3>
-        <div class="grid-form">
-            <input type="month" id="mes">
-            <input id="nome" placeholder="Descrição">
-            <input id="valor" type="number" placeholder="R$ 0,00">
-            <select id="cat">
-                <option value="Renda">💰 Renda</option>
-                <option value="Essencial">🏠 Essencial</option>
-                <option value="Estilo">🎡 Estilo de Vida</option>
-                <option value="Investimento">📈 Investimento</option>
-            </select>
-            <button onclick="add()">Adicionar</button>
-        </div>
-    </div>
+<div class="card">
+<div class="grid-form">
+<input type="month" id="mes">
+<input id="nome" placeholder="Descrição">
+<input id="valor" type="number" placeholder="Valor">
+<select id="cat">
+<option value="Renda">Renda</option>
+<option value="Essencial">Essencial</option>
+<option value="Estilo">Estilo</option>
+<option value="Investimento">Investimento</option>
+</select>
+<button onclick="add()">Adicionar</button>
+</div>
+</div>
 
-    <div class="kpi-group">
-        <div class="card kpi"><h3>Entradas</h3><span id="e" class="val-e">R$ 0,00</span></div>
-        <div class="card kpi"><h3>Saídas</h3><span id="s" class="val-s">R$ 0,00</span></div>
-        <div class="card kpi"><h3>Saldo</h3><span id="saldo">R$ 0,00</span></div>
-        <div class="card kpi"><h3>Score <span class="score-badge" id="score">0</span></h3><span id="status">---</span></div>
-    </div>
+<div class="kpi-group">
+<div class="card">Entradas<span id="e">R$ 0</span></div>
+<div class="card">Saídas<span id="s">R$ 0</span></div>
+<div class="card">Saldo<span id="saldo">R$ 0</span></div>
+</div>
 
-    <div class="charts">
-        <div class="card">
-            <h3>Distribuição de Gastos</h3>
-            <canvas id="chart1"></canvas>
-        </div>
-        <div class="card">
-            <h3>Insights</h3>
-            <div id="insights" style="margin-bottom: 15px; font-weight: bold; color: var(--primary);"></div>
-            <div id="metaTxt" style="font-size: 0.9rem; color: var(--dim);"></div>
-            <hr style="margin: 15px 0; border: 0; border-top: 1px solid #334155;">
-            <div id="lista"></div>
-        </div>
-    </div>
+<div class="card">
+<h3>Score: <span id="score">0</span></h3>
+<div id="status"></div>
+</div>
 
-    <div class="card">
-        <h3>Fluxo de Caixa</h3>
-        <canvas id="chart2" height="100"></canvas>
-    </div>
+<div class="card">
+<canvas id="chart1"></canvas>
+</div>
+
+<div class="card">
+<div id="insights"></div>
+<div id="metaTxt"></div>
+<hr>
+<div id="lista"></div>
+</div>
 
 </div>
 
 <script>
 
-    let db = JSON.parse(localStorage.getItem("finpro")) || {};
-    let c1, c2;
+let db = JSON.parse(localStorage.getItem("finpro")) || {};
+let c1;
 
-    const $ = id => document.getElementById(id);
-    const f = v => v.toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
+const $ = id => document.getElementById(id);
 
-    $("mes").value = new Date().toISOString().slice(0,7);
-    $("mes").addEventListener("change", update);
+$("mes").value = new Date().toISOString().slice(0,7);
 
-    function mes() {
-        return $("mes").value || new Date().toISOString().slice(0,7); // ✔ CORREÇÃO
-    }
+let timer;
 
-    function save() {
-        localStorage.setItem("finpro", JSON.stringify(db));
-    }
+function mes(){ return $("mes").value; }
 
-    function add() {
-        let m = mes(), n = $("nome").value, v = parseFloat($("valor").value), c = $("cat").value;
-        
-        if(!n || isNaN(v) || v <= 0) return; // ✔ CORREÇÃO
+function save(){
+    localStorage.setItem("finpro", JSON.stringify(db));
+}
 
-        if(!db[m]) db[m] = [];
-        db[m].push({id:Date.now(), nome:n, valor:v, cat:c});
+function add(){
+    let m = mes();
+    let n = $("nome").value;
+    let v = parseFloat($("valor").value);
+    let c = $("cat").value;
 
-        save();
-        $("nome").value=""; $("valor").value="";
-        update();
-    }
+    if(!n || !v) return;
 
-    function del(id) {
-        let m = mes();
-        if(!db[m]) return;
-        db[m] = db[m].filter(x => x.id !== id);
-        save();
-        update();
-    }
+    if(!db[m]) db[m]=[];
+    db[m].push({id:Date.now(), nome:n, valor:v, cat:c});
 
-    function update() {
+    save();
+    $("nome").value="";
+    $("valor").value="";
 
-        let m = mes(), arr = db[m] || [], e=0, s=0, i=0;
-        let cat = {Essencial:0, Estilo:0, Investimento:0};
-        let html="";
+    updateDebounced();
+}
 
-        arr.forEach(x => {
-            if(x.cat === "Renda") e += x.valor;
-            else {
-                s += x.valor;
-                cat[x.cat] += x.valor;
-                if(x.cat === "Investimento") i += x.valor;
-            }
+function del(id){
+    let m = mes();
+    db[m] = db[m].filter(x=>x.id!==id);
+    save();
+    updateDebounced();
+}
 
-            html += `
-                <div class="item">
-                    <div><b>${x.nome}</b><br><small style="color:var(--dim)">${x.cat}</small></div>
-                    <div>${f(x.valor)} <button class="btn-del" onclick="del(${x.id})">&times;</button></div>
-                </div>`;
-        });
+/* ================= OTIMIZAÇÃO ================= */
 
-        $("lista").innerHTML = html || "<small style='color:var(--dim)'>Nenhuma transação este mês.</small>";
+function updateDebounced(){
+    clearTimeout(timer);
+    timer = setTimeout(update, 80);
+}
 
-        $("e").innerText = f(e);
-        $("s").innerText = f(s);
-        $("saldo").innerText = f(e - s);
+/* ================= FUNÇÕES ================= */
 
-        let score = 50;
-        if(e > s && e > 0) score += 20;
-        if(i > e * 0.2 && e > 0) score += 20;
-        if(s < e * 0.7 && e > 0) score += 10;
+function update(){
 
-        $("score").innerText = Math.min(score, 100);
-        $("status").innerText = score >= 80 ? "Excelente" : score >= 50 ? "Regular" : "Crítico";
+    let m = mes();
+    let arr = db[m]||[];
 
-        $("metaTxt").innerText = `Meta Investimento (20%): ${f(e*0.2)} | Alcançado: ${f(i)}`;
-        $("insights").innerText = e < s ? "🚨 Cuidado: Gastos acima da renda!" : "✔ Finanças sob controle";
+    let e=0,s=0,i=0;
+    let cat={Essencial:0,Estilo:0,Investimento:0};
 
-        if(c1) c1.destroy();
-        if(c2) c2.destroy();
+    let html="";
 
-        c1 = new Chart($("chart1"), {
-            type: "doughnut",
-            data: {
-                labels: ["Essencial", "Estilo", "Investimento"],
-                datasets: [{
-                    data: [cat.Essencial, cat.Estilo, cat.Investimento],
-                    backgroundColor: ['#ef4444', '#f59e0b', '#10b981'],
-                    borderWidth: 0
+    arr.forEach(x=>{
+
+        if(x.cat==="Renda") e+=x.valor;
+        else{
+            s+=x.valor;
+            cat[x.cat]+=x.valor;
+            if(x.cat==="Investimento") i+=x.valor;
+        }
+
+        html+=`
+        <div class="item">
+            <div>${x.nome}<br><small>${x.cat}</small></div>
+            <div>R$ ${x.valor.toFixed(2)} <button class="btn-del" onclick="del(${x.id})">×</button></div>
+        </div>`;
+    });
+
+    $("lista").innerHTML = html;
+
+    $("e").innerText="R$ "+e.toFixed(2);
+    $("s").innerText="R$ "+s.toFixed(2);
+    $("saldo").innerText="R$ "+(e-s).toFixed(2);
+
+    let score=50;
+    if(e>s)score+=20;
+    if(i>e*0.2)score+=20;
+    if(s<e*0.7)score+=10;
+
+    $("score").innerText=Math.min(score,100);
+    $("status").innerText=score>=80?"Bom":"Ok";
+
+    $("metaTxt").innerText=`Meta 20%: R$ ${(e*0.2).toFixed(2)} | Inv: R$ ${i.toFixed(2)}`;
+
+    $("insights").innerText = e<s ? "⚠️ Gastos altos" : "✔ OK";
+
+    /* ================= CHART OTIMIZADO ================= */
+
+    if(c1){
+        c1.data.datasets[0].data=[
+            cat.Essencial,
+            cat.Estilo,
+            cat.Investimento
+        ];
+        c1.update();
+    } else {
+        c1=new Chart($("chart1"),{
+            type:"doughnut",
+            data:{
+                labels:["Essencial","Estilo","Investimento"],
+                datasets:[{
+                    data:[
+                        cat.Essencial,
+                        cat.Estilo,
+                        cat.Investimento
+                    ]
                 }]
             }
         });
-
-        c2 = new Chart($("chart2"), {
-            type: "bar",
-            data: {
-                labels: ["Entradas", "Saídas"],
-                datasets: [{
-                    data: [e, s],
-                    backgroundColor: ['#10b981', '#ef4444']
-                }]
-            },
-            options: { plugins: { legend: { display: false } } }
-        });
     }
+}
 
-    update();
+update();
 
 </script>
 
