@@ -550,27 +550,78 @@ const updateOriginal = update;
 update = function(){
 
     // roda sistema original primeiro
-    const updateOriginal = updateAvancado;
-
-function update(){
-    updateOriginal();
+    function update() {
 
     let m = mes();
     let arr = db[m] || [];
 
-    let e = 0;
-    let s = 0;
-    let i = 0;
+    let e = 0, s = 0, i = 0;
+    let cat = {Essencial:0,Estilo:0,Investimento:0};
+
+    let html = "";
 
     arr.forEach(x => {
         if(x.cat === "Renda") e += x.valor;
         else {
             s += x.valor;
+            if(cat[x.cat] !== undefined) cat[x.cat] += x.valor;
             if(x.cat === "Investimento") i += x.valor;
         }
+
+        html += `
+            <div class="item">
+                <div>${x.nome}<br><small>${x.cat}</small></div>
+                <div>R$ ${x.valor.toFixed(2)} <button class="btn-del" onclick="del(${x.id})">×</button></div>
+            </div>
+        `;
     });
 
-    alertasFinanceiros(e, s, i);
+    $("lista").innerHTML = html;
+
+    $("e").innerText = f(e);
+    $("s").innerText = f(s);
+    $("saldo").innerText = f(e - s);
+
+    let score = 0;
+    if(e > 0){
+        score = 50;
+        if(e > s) score += 20;
+        if(i >= e * 0.2) score += 20;
+        if(s <= e * 0.7) score += 10;
+    }
+
+    $("score").innerText = Math.min(score,100);
+
+    $("status").innerText =
+        score >= 80 ? "Excelente" :
+        score >= 50 ? "Regular" :
+        "Atenção";
+
+    $("metaTxt").innerText =
+        `Meta 20%: ${f(e*0.2)} | Investido: ${f(i)}`;
+
+    $("insights").innerText =
+        e < s && e > 0
+        ? "⚠ Gastos acima da renda"
+        : "✔ Finanças equilibradas";
+
+    const dados = [cat.Essencial, cat.Estilo, cat.Investimento];
+
+    if(window.c1){
+        window.c1.data.datasets[0].data = dados;
+        window.c1.update();
+    } else {
+        window.c1 = new Chart($("chart1"),{
+            type:"doughnut",
+            data:{
+                labels:["Essencial","Estilo","Investimento"],
+                datasets:[{data:dados}]
+            }
+        });
+    }
+
+    // funções extras (SEM sobrescrever update)
+    alertasFinanceiros(e,s,i);
     evolucaoMensal();
 }
 
