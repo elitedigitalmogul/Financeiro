@@ -7,19 +7,84 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-:root { --primary:#27ae60; --danger:#e74c3c; --info:#2980b9; --bg:#f0f2f5; }
-body { font-family: Arial; background: var(--bg); padding:20px; }
-.container { max-width:900px; margin:auto; }
-.card { background:white; padding:20px; margin-bottom:20px; border-radius:12px; }
-.grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; }
-input,select,button { padding:10px; margin:5px 0; }
-button { background:var(--primary); color:white; border:none; cursor:pointer; }
-.btn-delete { color:red; background:none; border:none; cursor:pointer; }
-.progress { height:15px; background:#eee; border-radius:10px; overflow:hidden; }
-.progress-bar { height:100%; background:var(--info); width:0%; }
+:root {
+  --primary:#27ae60;
+  --danger:#e74c3c;
+  --info:#2980b9;
+  --bg: linear-gradient(135deg,#eef2f7,#dfe6e9);
+}
+
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: var(--bg);
+  padding:20px;
+}
+
+.container {
+  max-width:1000px;
+  margin:auto;
+}
+
+.card {
+  background:white;
+  padding:20px;
+  margin-bottom:20px;
+  border-radius:16px;
+  box-shadow:0 8px 20px rgba(0,0,0,0.08);
+  transition:0.2s;
+}
+
+.card:hover { transform: translateY(-2px); }
+
+.grid {
+  display:grid;
+  grid-template-columns:repeat(3,1fr);
+  gap:15px;
+}
+
+.kpi-value {
+  font-size:22px;
+  font-weight:bold;
+}
+
+input,select,button {
+  padding:10px;
+  margin:5px 0;
+  border-radius:8px;
+  border:1px solid #ddd;
+}
+
+button {
+  background:var(--primary);
+  color:white;
+  border:none;
+  cursor:pointer;
+  width:100%;
+}
+
+button:hover { opacity:0.9; }
+
+.progress {
+  height:15px;
+  background:#eee;
+  border-radius:10px;
+  overflow:hidden;
+}
+
+.progress-bar {
+  height:100%;
+  background:var(--info);
+  width:0%;
+}
+
+li {
+  display:flex;
+  justify-content:space-between;
+  padding:5px 0;
+}
+
 .saldo-positivo { color:green; }
 .saldo-negativo { color:red; }
-li { display:flex; justify-content:space-between; }
 </style>
 </head>
 
@@ -27,11 +92,16 @@ li { display:flex; justify-content:space-between; }
 
 <div class="container">
 
+<!-- MÊS -->
+<div class="card">
+<h3>📅 Mês</h3>
+<input type="month" id="mes" onchange="atualizar()">
+</div>
+
 <!-- RENDAS -->
 <div class="card">
 <h3>💰 Rendas</h3>
-
-<input type="text" id="nomeRenda" placeholder="Ex: Salário, iFood">
+<input type="text" id="nomeRenda" placeholder="Ex: Salário">
 <input type="number" id="valorRenda" placeholder="Valor">
 <button onclick="addRenda()">Adicionar Renda</button>
 
@@ -41,39 +111,51 @@ li { display:flex; justify-content:space-between; }
 
 <!-- GASTOS -->
 <div class="card">
-<h3>🛍️ Novo Gasto</h3>
+<h3>🛍️ Gastos</h3>
 <input type="text" id="nome" placeholder="Nome">
 <input type="number" id="valor" placeholder="Valor">
 <select id="categoria">
-<option value="Essencial">Essencial</option>
-<option value="Estilo">Estilo de Vida</option>
-<option value="Investimento">Reserva</option>
+<option>Essencial</option>
+<option>Estilo</option>
+<option>Investimento</option>
 </select>
 <button onclick="addGasto()">Adicionar</button>
 </div>
 
-<!-- RESUMO -->
+<!-- KPIs -->
 <div class="grid">
-<div class="card"><h4>Gastos</h4><span id="total">R$0</span></div>
-<div class="card"><h4>Saldo</h4><span id="saldo">R$0</span></div>
-<div class="card"><h4>Reserva</h4><span id="reserva">R$0</span></div>
+<div class="card">
+<h4>Gastos</h4>
+<div class="kpi-value" id="total">R$0</div>
+</div>
+
+<div class="card">
+<h4>Saldo</h4>
+<div class="kpi-value" id="saldo">R$0</div>
+</div>
+
+<div class="card">
+<h4>Reserva</h4>
+<div class="kpi-value" id="reserva">R$0</div>
+</div>
 </div>
 
 <!-- META -->
 <div class="card">
-<h3>🎯 Meta (R$1000)</h3>
-<div class="progress"><div class="progress-bar" id="barra"></div></div>
+<h3>🎯 Meta R$1000</h3>
+<div class="progress">
+<div class="progress-bar" id="barra"></div>
+</div>
 <p id="progresso">0%</p>
-<p id="alerta"></p>
 </div>
 
-<!-- ANALISE -->
+<!-- ANÁLISE -->
 <div class="card">
-<h3>🧠 Análise Inteligente</h3>
+<h3>🧠 Análise</h3>
 <p id="analise"></p>
 </div>
 
-<!-- GRAFICO -->
+<!-- GRÁFICO -->
 <div class="card">
 <canvas id="grafico"></canvas>
 </div>
@@ -87,139 +169,136 @@ li { display:flex; justify-content:space-between; }
 
 <script>
 
-// DADOS
-let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
-let rendas = JSON.parse(localStorage.getItem("rendas")) || [];
+let db = JSON.parse(localStorage.getItem("db")) || {};
 let chart;
+
+function getMes(){
+  return document.getElementById("mes").value || new Date().toISOString().slice(0,7);
+}
+
+function initMes(){
+  let mes = getMes();
+  if(!db[mes]) db[mes] = {gastos:[],rendas:[]};
+  return db[mes];
+}
 
 // RENDAS
 function addRenda(){
-    let nome = document.getElementById("nomeRenda").value;
-    let valor = parseFloat(document.getElementById("valorRenda").value);
+  let mesData = initMes();
 
-    if(!nome || !valor) return alert("Preencha");
+  let nome = nomeRenda.value;
+  let valor = parseFloat(valorRenda.value);
 
-    rendas.push({nome, valor});
-    localStorage.setItem("rendas", JSON.stringify(rendas));
+  if(!nome || !valor) return alert("Preencha");
 
-    document.getElementById("nomeRenda").value="";
-    document.getElementById("valorRenda").value="";
+  mesData.rendas.push({nome,valor});
+  salvar();
 
-    atualizar();
-}
-
-function removerRenda(i){
-    rendas.splice(i,1);
-    localStorage.setItem("rendas", JSON.stringify(rendas));
-    atualizar();
+  nomeRenda.value="";
+  valorRenda.value="";
+  atualizar();
 }
 
 // GASTOS
 function addGasto(){
-    let nome = document.getElementById("nome").value;
-    let valor = parseFloat(document.getElementById("valor").value);
-    let categoria = document.getElementById("categoria").value;
+  let mesData = initMes();
 
-    if(!nome || !valor) return alert("Preencha");
+  let nome = document.getElementById("nome").value;
+  let valor = parseFloat(document.getElementById("valor").value);
+  let categoria = document.getElementById("categoria").value;
 
-    gastos.push({nome, valor, categoria});
+  if(!nome || !valor) return alert("Preencha");
 
-    document.getElementById("nome").value="";
-    document.getElementById("valor").value="";
+  mesData.gastos.push({nome,valor,categoria});
+  salvar();
 
-    atualizar();
+  nome.value="";
+  valor.value="";
+  atualizar();
+}
+
+function removerRenda(i){
+  initMes().rendas.splice(i,1);
+  salvar();
+  atualizar();
 }
 
 function remover(i){
-    gastos.splice(i,1);
-    atualizar();
+  initMes().gastos.splice(i,1);
+  salvar();
+  atualizar();
 }
 
-// ATUALIZAR
+function salvar(){
+  let mes = getMes();
+  db[mes] = initMes();
+  localStorage.setItem("db",JSON.stringify(db));
+}
+
+// UPDATE
 function atualizar(){
-    let totalGastos = 0, reserva = 0;
-    let categorias = {Essencial:0, Estilo:0, Investimento:0};
-    let lista = document.getElementById("lista");
-    lista.innerHTML="";
 
-    // SOMA RENDAS
-    let salario = 0;
-    let listaRenda = document.getElementById("listaRenda");
-    listaRenda.innerHTML="";
+  let mesData = initMes();
 
-    rendas.forEach((r,i)=>{
-        salario += r.valor;
+  let gastos = mesData.gastos;
+  let rendas = mesData.rendas;
 
-        let item=document.createElement("li");
-        item.innerHTML=`${r.nome} - R$${r.valor}
-        <button onclick="removerRenda(${i})">X</button>`;
-        listaRenda.appendChild(item);
-    });
+  let totalGastos=0,reserva=0;
+  let categorias={Essencial:0,Estilo:0,Investimento:0};
 
-    document.getElementById("totalRenda").innerText = salario.toFixed(2);
+  let lista=document.getElementById("lista");
+  let listaRenda=document.getElementById("listaRenda");
 
-    // GASTOS
-    gastos.forEach((g,i)=>{
-        if(g.categoria==="Investimento"){reserva+=g.valor;}
-        else{totalGastos+=g.valor;}
+  lista.innerHTML="";
+  listaRenda.innerHTML="";
 
-        categorias[g.categoria]+=g.valor;
+  let salario=0;
 
-        let item=document.createElement("li");
-        item.innerHTML=`${g.nome} - R$${g.valor}
-        <button onclick="remover(${i})">X</button>`;
-        lista.appendChild(item);
-    });
+  rendas.forEach((r,i)=>{
+    salario+=r.valor;
+    listaRenda.innerHTML+=`<li>${r.nome} - R$${r.valor} <button onclick="removerRenda(${i})">X</button></li>`;
+  });
 
-    let saldo = salario - totalGastos;
+  gastos.forEach((g,i)=>{
+    categorias[g.categoria]+=g.valor;
 
-    document.getElementById("total").innerText="R$"+totalGastos.toFixed(2);
-    document.getElementById("saldo").innerText="R$"+saldo.toFixed(2);
-    document.getElementById("reserva").innerText="R$"+reserva.toFixed(2);
+    if(g.categoria==="Investimento") reserva+=g.valor;
+    else totalGastos+=g.valor;
 
-    // META
-    let meta=1000;
-    let perc=Math.min((reserva/meta)*100,100);
-    document.getElementById("barra").style.width=perc+"%";
-    document.getElementById("progresso").innerText=perc.toFixed(0)+"%";
+    lista.innerHTML+=`<li>${g.nome} - R$${g.valor} <button onclick="remover(${i})">X</button></li>`;
+  });
 
-    // ANALISE
-    gerarAnalise(totalGastos,reserva,salario,categorias);
+  let saldo = salario-totalGastos;
 
-    // GRAFICO
-    renderGrafico(categorias);
+  total.innerText="R$"+totalGastos.toFixed(2);
+  reservaEl.innerText="R$"+reserva.toFixed(2);
+  saldoEl.innerText="R$"+saldo.toFixed(2);
+  totalRenda.innerText=salario.toFixed(2);
 
-    localStorage.setItem("gastos", JSON.stringify(gastos));
+  let meta=1000;
+  let perc=Math.min((reserva/meta)*100,100);
+
+  barra.style.width=perc+"%";
+  progresso.innerText=perc.toFixed(0)+"%";
+
+  analise.innerHTML=`
+  Essenciais: ${((categorias.Essencial/salario)*100||0).toFixed(1)}%<br>
+  Lazer: ${((categorias.Estilo/salario)*100||0).toFixed(1)}%<br>
+  Reserva: ${((reserva/salario)*100||0).toFixed(1)}%
+  `;
+
+  renderGrafico(categorias);
 }
 
-// ANALISE
-function gerarAnalise(total,reserva,salario,c){
-    let txt="";
-
-    let p1=(c.Essencial/salario)*100||0;
-    let p2=(c.Estilo/salario)*100||0;
-    let p3=(reserva/salario)*100||0;
-
-    txt+= p1>60 ? "⚠️ Essenciais altos<br>" : "✅ Essenciais ok<br>";
-    txt+= p2>30 ? "⚠️ Muito lazer<br>" : "👍 Lazer ok<br>";
-    txt+= p3<20 ? "💡 Pouca reserva<br>" : "🚀 Boa reserva<br>";
-
-    let saldo=salario-total;
-    txt+= saldo<0 ? "🚨 Negativo" : "✅ Controlado";
-
-    document.getElementById("analise").innerHTML=txt;
-}
-
-// GRAFICO
 function renderGrafico(cat){
-    if(chart) chart.destroy();
-    chart=new Chart(document.getElementById("grafico"),{
-        type:"pie",
-        data:{
-            labels:Object.keys(cat),
-            datasets:[{data:Object.values(cat)}]
-        }
-    });
+  if(chart) chart.destroy();
+  chart=new Chart(grafico,{
+    type:"pie",
+    data:{
+      labels:Object.keys(cat),
+      datasets:[{data:Object.values(cat)}]
+    }
+  });
 }
 
 atualizar();
