@@ -1,309 +1,325 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<title>Dashboard Financeiro Pro</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance PRO | Dashboard</title>
+    <script src="https://jsdelivr.net"></script>
+    <link href="https://googleapis.com" rel="stylesheet">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #ff4d6d;
+            --bg: #f8fafe;
+            --card-bg: rgba(255, 255, 255, 0.9);
+            --text-main: #2b2d42;
+        }
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background: var(--bg);
+            color: var(--text-main);
+            margin: 0;
+            padding: 20px;
+        }
 
-<style>
-:root {
-  --primary:#27ae60;
-  --danger:#e74c3c;
-  --info:#2980b9;
-  --bg: linear-gradient(135deg,#eef2f7,#dfe6e9);
-}
+        .container {
+            max-width: 1200px;
+            margin: auto;
+        }
 
-body {
-  font-family: 'Segoe UI', sans-serif;
-  background: var(--bg);
-  padding:20px;
-}
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+        }
 
-.container {
-  max-width:1000px;
-  margin:auto;
-}
+        .main-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr 1fr;
+            gap: 20px;
+        }
 
-.card {
-  background:white;
-  padding:20px;
-  margin-bottom:20px;
-  border-radius:16px;
-  box-shadow:0 8px 20px rgba(0,0,0,0.08);
-  transition:0.2s;
-}
+        .sidebar {
+            grid-column: span 1;
+        }
 
-.card:hover { transform: translateY(-2px); }
+        .content {
+            grid-column: span 2;
+        }
 
-.grid {
-  display:grid;
-  grid-template-columns:repeat(3,1fr);
-  gap:15px;
-}
+        .card {
+            background: var(--card-bg);
+            backdrop-filter: blur(10px);
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 24px;
+            border: 1px solid rgba(255,255,255,0.3);
+            box-shadow: 0 10px 30px rgba(0,0,0,0.03);
+        }
 
-.kpi-value {
-  font-size:22px;
-  font-weight:bold;
-}
+        h3 { margin-top: 0; font-size: 1.2rem; color: var(--primary); }
 
-input,select,button {
-  padding:10px;
-  margin:5px 0;
-  border-radius:8px;
-  border:1px solid #ddd;
-}
+        .kpi-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 20px;
+        }
 
-button {
-  background:var(--primary);
-  color:white;
-  border:none;
-  cursor:pointer;
-  width:100%;
-}
+        .kpi-card {
+            text-align: center;
+            padding: 20px;
+            border-radius: 20px;
+            background: white;
+        }
 
-button:hover { opacity:0.9; }
+        .kpi-value { font-size: 1.4rem; font-weight: 700; margin-top: 5px; }
+        .kpi-label { font-size: 0.85rem; opacity: 0.7; }
 
-.progress {
-  height:15px;
-  background:#eee;
-  border-radius:10px;
-  overflow:hidden;
-}
+        input, select {
+            width: 100%;
+            padding: 12px;
+            margin: 8px 0;
+            border-radius: 12px;
+            border: 1px solid #e0e0e0;
+            outline: none;
+            box-sizing: border-box;
+            font-family: inherit;
+        }
 
-.progress-bar {
-  height:100%;
-  background:var(--info);
-  width:0%;
-}
+        button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            padding: 14px;
+            border-radius: 12px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            width: 100%;
+        }
 
-li {
-  display:flex;
-  justify-content:space-between;
-  padding:5px 0;
-}
+        button:hover { background: var(--secondary); transform: translateY(-2px); }
 
-.saldo-positivo { color:green; }
-.saldo-negativo { color:red; }
-</style>
+        .progress-container {
+            background: #edf2f7;
+            height: 12px;
+            border-radius: 10px;
+            margin: 15px 0;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, var(--primary), var(--success));
+            border-radius: 10px;
+            width: 0%;
+            transition: 0.5s;
+        }
+
+        .list-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #fff;
+            margin-bottom: 8px;
+            border-radius: 12px;
+            font-size: 0.9rem;
+        }
+
+        .btn-delete {
+            background: #ffe5ec;
+            color: var(--danger);
+            width: 32px; height: 32px;
+            padding: 0; border-radius: 8px;
+        }
+
+        .btn-delete:hover { background: var(--danger); color: white; }
+
+        #grafico { max-height: 300px; }
+
+        @media (max-width: 900px) {
+            .main-grid { grid-template-columns: 1fr; }
+            .content, .sidebar { grid-column: span 1; }
+        }
+    </style>
 </head>
-
 <body>
 
 <div class="container">
+    <header>
+        <div>
+            <h2 style="margin:0">💰 FinancePRO</h2>
+            <p style="margin:0; opacity:0.6; font-size: 0.9rem;">Controle seu futuro financeiro</p>
+        </div>
+        <input type="month" id="mes" onchange="atualizar()" style="width: auto;">
+    </header>
 
-<!-- MÊS -->
-<div class="card">
-<h3>📅 Mês</h3>
-<input type="month" id="mes" onchange="atualizar()">
-</div>
+    <div class="main-grid">
+        <!-- COLUNA ESQUERDA: INPUTS -->
+        <div class="sidebar">
+            <div class="card">
+                <h3>📥 Entradas</h3>
+                <input type="text" id="nomeRenda" placeholder="Ex: Salário Mensal">
+                <input type="number" id="valorRenda" placeholder="R$ 0,00">
+                <button onclick="addRenda()">Adicionar Renda</button>
+            </div>
 
-<!-- RENDAS -->
-<div class="card">
-<h3>💰 Rendas</h3>
-<input type="text" id="nomeRenda" placeholder="Ex: Salário">
-<input type="number" id="valorRenda" placeholder="Valor">
-<button onclick="addRenda()">Adicionar Renda</button>
+            <div class="card">
+                <h3>📤 Saídas</h3>
+                <input type="text" id="nomeGasto" placeholder="Ex: Aluguel">
+                <input type="number" id="valorGasto" placeholder="R$ 0,00">
+                <select id="categoria">
+                    <option value="Essencial">🏠 Essencial</option>
+                    <option value="Estilo">🍔 Estilo de Vida</option>
+                    <option value="Investimento">📈 Investimento</option>
+                </select>
+                <button onclick="addGasto()" style="background: var(--text-main);">Registrar Gasto</button>
+            </div>
+        </div>
 
-<h4>Total Entrada: R$ <span id="totalRenda">0</span></h4>
-<ul id="listaRenda"></ul>
-</div>
+        <!-- COLUNA DIREITA: DASHBOARD -->
+        <div class="content">
+            <div class="kpi-grid">
+                <div class="kpi-card">
+                    <div class="kpi-label">Entradas</div>
+                    <div class="kpi-value" id="totalRenda" style="color: var(--primary)">R$ 0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Gastos</div>
+                    <div class="kpi-value" id="totalGastos" style="color: var(--danger)">R$ 0</div>
+                </div>
+                <div class="kpi-card">
+                    <div class="kpi-label">Disponível</div>
+                    <div class="kpi-value" id="saldo" style="color: var(--success)">R$ 0</div>
+                </div>
+            </div>
 
-<!-- GASTOS -->
-<div class="card">
-<h3>🛍️ Gastos</h3>
-<input type="text" id="nome" placeholder="Nome">
-<input type="number" id="valor" placeholder="Valor">
-<select id="categoria">
-<option>Essencial</option>
-<option>Estilo</option>
-<option>Investimento</option>
-</select>
-<button onclick="addGasto()">Adicionar</button>
-</div>
+            <div class="card">
+                <div style="display:flex; justify-content: space-between; align-items: center;">
+                    <h3>🎯 Meta de Reserva (R$ 1.000)</h3>
+                    <span id="progressoText" style="font-weight: bold;">0%</span>
+                </div>
+                <div class="progress-container">
+                    <div class="progress-bar" id="barra"></div>
+                </div>
+            </div>
 
-<!-- KPIs -->
-<div class="grid">
-<div class="card">
-<h4>Gastos</h4>
-<div class="kpi-value" id="total">R$0</div>
-</div>
-
-<div class="card">
-<h4>Saldo</h4>
-<div class="kpi-value" id="saldo">R$0</div>
-</div>
-
-<div class="card">
-<h4>Reserva</h4>
-<div class="kpi-value" id="reserva">R$0</div>
-</div>
-</div>
-
-<!-- META -->
-<div class="card">
-<h3>🎯 Meta R$1000</h3>
-<div class="progress">
-<div class="progress-bar" id="barra"></div>
-</div>
-<p id="progresso">0%</p>
-</div>
-
-<!-- ANÁLISE -->
-<div class="card">
-<h3>🧠 Análise</h3>
-<p id="analise"></p>
-</div>
-
-<!-- GRÁFICO -->
-<div class="card">
-<canvas id="grafico"></canvas>
-</div>
-
-<!-- LISTA -->
-<div class="card">
-<ul id="lista"></ul>
-</div>
-
+            <div class="main-grid" style="grid-template-columns: 1fr 1fr; gap: 20px;">
+                <div class="card" style="margin-bottom:0">
+                    <h3>📊 Categorias</h3>
+                    <canvas id="grafico"></canvas>
+                </div>
+                <div class="card" style="margin-bottom:0">
+                    <h3>📝 Extrato</h3>
+                    <div id="lista" style="max-height: 250px; overflow-y: auto;"></div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
 <script>
+    let db = JSON.parse(localStorage.getItem("db")) || {};
+    let chart;
 
-let db = JSON.parse(localStorage.getItem("db")) || {};
-let chart;
+    const getEl = id => document.getElementById(id);
 
-function getMes(){
-  return document.getElementById("mes").value || new Date().toISOString().slice(0,7);
-}
-
-function initMes(){
-  let mes = getMes();
-  if(!db[mes]) db[mes] = {gastos:[],rendas:[]};
-  return db[mes];
-}
-
-// RENDAS
-function addRenda(){
-  let mesData = initMes();
-
-  let nome = nomeRenda.value;
-  let valor = parseFloat(valorRenda.value);
-
-  if(!nome || !valor) return alert("Preencha");
-
-  mesData.rendas.push({nome,valor});
-  salvar();
-
-  nomeRenda.value="";
-  valorRenda.value="";
-  atualizar();
-}
-
-// GASTOS
-function addGasto(){
-  let mesData = initMes();
-
-  let nome = document.getElementById("nome").value;
-  let valor = parseFloat(document.getElementById("valor").value);
-  let categoria = document.getElementById("categoria").value;
-
-  if(!nome || !valor) return alert("Preencha");
-
-  mesData.gastos.push({nome,valor,categoria});
-  salvar();
-
-  nome.value="";
-  valor.value="";
-  atualizar();
-}
-
-function removerRenda(i){
-  initMes().rendas.splice(i,1);
-  salvar();
-  atualizar();
-}
-
-function remover(i){
-  initMes().gastos.splice(i,1);
-  salvar();
-  atualizar();
-}
-
-function salvar(){
-  let mes = getMes();
-  db[mes] = initMes();
-  localStorage.setItem("db",JSON.stringify(db));
-}
-
-// UPDATE
-function atualizar(){
-
-  let mesData = initMes();
-
-  let gastos = mesData.gastos;
-  let rendas = mesData.rendas;
-
-  let totalGastos=0,reserva=0;
-  let categorias={Essencial:0,Estilo:0,Investimento:0};
-
-  let lista=document.getElementById("lista");
-  let listaRenda=document.getElementById("listaRenda");
-
-  lista.innerHTML="";
-  listaRenda.innerHTML="";
-
-  let salario=0;
-
-  rendas.forEach((r,i)=>{
-    salario+=r.valor;
-    listaRenda.innerHTML+=`<li>${r.nome} - R$${r.valor} <button onclick="removerRenda(${i})">X</button></li>`;
-  });
-
-  gastos.forEach((g,i)=>{
-    categorias[g.categoria]+=g.valor;
-
-    if(g.categoria==="Investimento") reserva+=g.valor;
-    else totalGastos+=g.valor;
-
-    lista.innerHTML+=`<li>${g.nome} - R$${g.valor} <button onclick="remover(${i})">X</button></li>`;
-  });
-
-  let saldo = salario-totalGastos;
-
-  total.innerText="R$"+totalGastos.toFixed(2);
-  reservaEl.innerText="R$"+reserva.toFixed(2);
-  saldoEl.innerText="R$"+saldo.toFixed(2);
-  totalRenda.innerText=salario.toFixed(2);
-
-  let meta=1000;
-  let perc=Math.min((reserva/meta)*100,100);
-
-  barra.style.width=perc+"%";
-  progresso.innerText=perc.toFixed(0)+"%";
-
-  analise.innerHTML=`
-  Essenciais: ${((categorias.Essencial/salario)*100||0).toFixed(1)}%<br>
-  Lazer: ${((categorias.Estilo/salario)*100||0).toFixed(1)}%<br>
-  Reserva: ${((reserva/salario)*100||0).toFixed(1)}%
-  `;
-
-  renderGrafico(categorias);
-}
-
-function renderGrafico(cat){
-  if(chart) chart.destroy();
-  chart=new Chart(grafico,{
-    type:"pie",
-    data:{
-      labels:Object.keys(cat),
-      datasets:[{data:Object.values(cat)}]
+    function initMes() {
+        let mes = getEl("mes").value || new Date().toISOString().slice(0, 7);
+        if (!db[mes]) db[mes] = { gastos: [], rendas: [] };
+        return db[mes];
     }
-  });
-}
 
-atualizar();
+    function addRenda() {
+        let mesData = initMes();
+        let nome = getEl("nomeRenda").value;
+        let valor = parseFloat(getEl("valorRenda").value);
+        if (!nome || isNaN(valor)) return;
+        mesData.rendas.push({ nome, valor });
+        salvar();
+        getEl("nomeRenda").value = ""; getEl("valorRenda").value = "";
+        atualizar();
+    }
 
+    function addGasto() {
+        let mesData = initMes();
+        let nome = getEl("nomeGasto").value;
+        let valor = parseFloat(getEl("valorGasto").value);
+        let categoria = getEl("categoria").value;
+        if (!nome || isNaN(valor)) return;
+        mesData.gastos.push({ nome, valor, categoria });
+        salvar();
+        getEl("nomeGasto").value = ""; getEl("valorGasto").value = "";
+        atualizar();
+    }
+
+    function removerRenda(i) { initMes().rendas.splice(i, 1); salvar(); atualizar(); }
+    function removerGasto(i) { initMes().gastos.splice(i, 1); salvar(); atualizar(); }
+
+    function salvar() {
+        let mes = getEl("mes").value;
+        localStorage.setItem("db", JSON.stringify(db));
+    }
+
+    function atualizar() {
+        let mesData = initMes();
+        let totalR = 0, totalG = 0, reserva = 0;
+        let catData = { Essencial: 0, Estilo: 0, Investimento: 0 };
+        
+        let lista = getEl("lista");
+        lista.innerHTML = "";
+
+        mesData.rendas.forEach((r, i) => totalR += r.valor);
+        mesData.gastos.forEach((g, i) => {
+            catData[g.categoria] += g.valor;
+            if (g.categoria === "Investimento") reserva += g.valor;
+            else totalG += g.valor;
+            lista.innerHTML += `
+                <div class="list-item">
+                    <span>${g.nome} <br><small style="opacity:0.5">${g.categoria}</small></span>
+                    <div>
+                        <b>R$ ${g.valor.toFixed(2)}</b>
+                        <button class="btn-delete" onclick="removerGasto(${i})">×</button>
+                    </div>
+                </div>`;
+        });
+
+        getEl("totalRenda").innerText = "R$ " + totalR.toFixed(2);
+        getEl("totalGastos").innerText = "R$ " + totalG.toFixed(2);
+        getEl("saldo").innerText = "R$ " + (totalR - totalG - reserva).toFixed(2);
+
+        let perc = Math.min((reserva / 1000) * 100, 100);
+        getEl("barra").style.width = perc + "%";
+        getEl("progressoText").innerText = perc.toFixed(0) + "%";
+
+        renderGrafico(catData);
+    }
+
+    function renderGrafico(cat) {
+        if (chart) chart.destroy();
+        chart = new Chart(getEl("grafico"), {
+            type: 'doughnut',
+            data: {
+                labels: ['Essencial', 'Estilo', 'Investimento'],
+                datasets: [{
+                    data: Object.values(cat),
+                    backgroundColor: ['#4361ee', '#4cc9f0', '#4895ef'],
+                    borderWidth: 0
+                }]
+            },
+            options: { plugins: { legend: { position: 'bottom' } }, cutout: '70%' }
+        });
+    }
+
+    window.onload = () => {
+        getEl("mes").value = new Date().toISOString().slice(0, 7);
+        atualizar();
+    };
 </script>
-
 </body>
 </html>
