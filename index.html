@@ -135,13 +135,14 @@ Score: <span id="score">0</span>
 
 <!-- INSIGHTS + LISTA -->
 <div class="card">
-<div id="insights"></div>
-<div id="metaTxt"></div>
-<hr style="margin:15px 0;">
-<div id="lista"></div>
+    <div id="insights"></div>
+    <div id="metaTxt"></div>
+    <hr style="margin:15px 0;">
+    <div id="lista"></div>
 </div>
 
 </div>
+
 <script>
 
 let db = JSON.parse(localStorage.getItem("finpro")) || {};
@@ -149,23 +150,48 @@ let chart;
 
 const $ = id => document.getElementById(id);
 
-$("mes").value = new Date().toISOString().slice(0,7);
+/* =========================
+   INICIALIZAÇÃO SEGURA DO MÊS
+========================= */
+window.addEventListener("DOMContentLoaded", () => {
+    const el = $("mes");
 
+    if (el) {
+        el.value = new Date().toISOString().slice(0,7);
+    }
+});
+
+/* =========================
+   MÊS (CORRIGIDO E BLINDADO)
+========================= */
 function mes(){
 
-    let m = $("mes").value;
+    const el = $("mes");
 
-    if(!m){
+    if (!el) {
+        return new Date().toISOString().slice(0,7);
+    }
+
+    let m = el.value;
+
+    if (!m || m.trim() === "") {
         m = new Date().toISOString().slice(0,7);
-        $("mes").value = m;
+        el.value = m;
     }
 
     return m;
 }
+
+/* =========================
+   SALVAR
+========================= */
 function save(){
     localStorage.setItem("finpro", JSON.stringify(db));
 }
 
+/* =========================
+   FORMATADOR
+========================= */
 function f(v){
     return (v||0).toLocaleString("pt-BR",{
         style:"currency",
@@ -174,8 +200,12 @@ function f(v){
 }
 
 </script>
+
 <script>
 
+/* =========================
+   ADICIONAR
+========================= */
 function add(){
 
     let m = mes();
@@ -202,6 +232,9 @@ function add(){
     update();
 }
 
+/* =========================
+   REMOVER
+========================= */
 function del(id){
 
     let m = mes();
@@ -214,6 +247,8 @@ function del(id){
 
     update();
 }
+
+</script>
 
 /* =========================
    IMPORTADOR DE EXTRATO
