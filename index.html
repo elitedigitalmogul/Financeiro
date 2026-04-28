@@ -1,181 +1,177 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance PRO | Dashboard</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance PRO | Dashboard</title>
 
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-    <style>
-        :root {
-            --bg:#0f172a;
-            --card:#1e293b;
-            --primary:#10b981;
-            --danger:#ef4444;
-            --text:#f8fafc;
-            --dim:#94a3b8;
-        }
+<style>
+:root{
+    --bg:#0f172a;
+    --card:#1e293b;
+    --primary:#10b981;
+    --danger:#ef4444;
+    --text:#f8fafc;
+    --dim:#94a3b8;
+}
 
-        *{margin:0;padding:0;box-sizing:border-box;}
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+}
 
-        body{
-            background:var(--bg);
-            color:var(--text);
-            font-family:sans-serif;
-            padding:20px;
-        }
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:sans-serif;
+    padding:20px;
+}
 
-        .container{max-width:1000px;margin:auto;}
+.container{
+    max-width:1000px;
+    margin:auto;
+}
 
-        .card{
-            background:var(--card);
-            padding:20px;
-            border-radius:16px;
-            margin-bottom:20px;
-        }
+.card{
+    background:var(--card);
+    padding:20px;
+    border-radius:16px;
+    margin-bottom:20px;
+}
 
-        .grid-form{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-            gap:10px;
-        }
+.grid-form{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
+    gap:10px;
+}
 
-        input,select,button{
-            padding:12px;
-            border-radius:10px;
-            border:1px solid #334155;
-            background:#0f172a;
-            color:#fff;
-        }
+input,select,button,textarea{
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #334155;
+    background:#0f172a;
+    color:#fff;
+}
 
-        button{
-            background:var(--primary);
-            border:none;
-            cursor:pointer;
-        }
+button{
+    background:var(--primary);
+    border:none;
+    cursor:pointer;
+}
 
-        .kpi-group{
-            display:grid;
-            grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-            gap:15px;
-        }
+.item{
+    display:flex;
+    justify-content:space-between;
+    padding:10px;
+    border-bottom:1px solid #334155;
+}
 
-        .item{
-            display:flex;
-            justify-content:space-between;
-            padding:10px;
-            border-bottom:1px solid #334155;
-        }
+.btn-del{
+    background:none;
+    border:none;
+    color:var(--danger);
+    cursor:pointer;
+}
 
-        .btn-del{
-            background:none;
-            border:none;
-            color:var(--danger);
-            cursor:pointer;
-        }
+.kpi-group{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
+    gap:15px;
+}
 
-        .charts{
-            display:grid;
-            grid-template-columns:1fr;
-            gap:20px;
-        }
-
-        @media(min-width:768px){
-            .charts{grid-template-columns:1fr 1fr;}
-        }
-
-        canvas{
-            width:100%;
-            max-height:300px;
-        }
-    </style>
+canvas{
+    width:100%;
+}
+</style>
 </head>
 
 <body>
 
 <div class="container">
 
-    <!-- INPUT -->
-    <div class="card">
-        <div class="grid-form">
-            <input type="month" id="mes">
-            <input id="nome" placeholder="Descrição">
-            <input id="valor" type="number" placeholder="Valor">
-            <select id="cat">
-                <option value="Renda">Renda</option>
-                <option value="Essencial">Essencial</option>
-                <option value="Estilo">Estilo</option>
-                <option value="Investimento">Investimento</option>
-            </select>
-            <button onclick="add()">Adicionar</button>
-        </div>
-    </div>
-
-    <!-- KPIs -->
-    <div class="kpi-group">
-        <div class="card">Entradas<br><span id="e">R$ 0,00</span></div>
-        <div class="card">Saídas<br><span id="s">R$ 0,00</span></div>
-        <div class="card">Saldo<br><span id="saldo">R$ 0,00</span></div>
-    </div>
-
-    <!-- SCORE -->
-    <div class="card">
-        <h3>Score: <span id="score">0</span></h3>
-        <div id="status"></div>
-    </div>
-
-    <!-- CHART -->
-    <div class="card">
-        <canvas id="chart1"></canvas>
-    </div>
-
-    <!-- INSIGHTS + LISTA -->
-    <div class="card">
-        <div id="insights"></div>
-        <div id="metaTxt"></div>
-        <hr style="margin:15px 0; border:0; border-top:1px solid #334155;">
-        <div id="lista"></div>
-    </div>
-
+<!-- INPUT -->
+<div class="card">
+<div class="grid-form">
+<input type="month" id="mes">
+<input id="nome" placeholder="Descrição">
+<input id="valor" type="number" placeholder="Valor">
+<select id="cat">
+<option value="Renda">Renda</option>
+<option value="Essencial">Essencial</option>
+<option value="Estilo">Estilo</option>
+<option value="Investimento">Investimento</option>
+</select>
+<button onclick="add()">Adicionar</button>
+</div>
 </div>
 
-</body>
-</html>
+<!-- IMPORTADOR EXTRATO -->
+<div class="card">
+<h3>Importar Extrato</h3>
+<textarea id="extrato" placeholder="Cole aqui seu extrato"></textarea>
+<button onclick="importarExtrato()">Importar</button>
+</div>
+
+<!-- KPIs -->
+<div class="kpi-group">
+<div class="card">Entradas<br><span id="e">0</span></div>
+<div class="card">Saídas<br><span id="s">0</span></div>
+<div class="card">Saldo<br><span id="saldo">0</span></div>
+</div>
+
+<!-- SCORE -->
+<div class="card">
+Score: <span id="score">0</span>
+<div id="status"></div>
+</div>
+
+<!-- CHART -->
+<div class="card">
+<canvas id="chart1"></canvas>
+</div>
+
+<!-- INSIGHTS + LISTA -->
+<div class="card">
+<div id="insights"></div>
+<div id="metaTxt"></div>
+<hr style="margin:15px 0;">
+<div id="lista"></div>
+</div>
+
+</div>
 <script>
+
 let db = JSON.parse(localStorage.getItem("finpro")) || {};
-let c1;
+let chart;
 
 const $ = id => document.getElementById(id);
 
-const f = v => (v || 0).toLocaleString('pt-BR',{
-    style:'currency',
-    currency:'BRL'
-});
-
-// inicia mês automaticamente
 $("mes").value = new Date().toISOString().slice(0,7);
 
-// garante mês válido
-function mes() {
-    let m = $("mes").value;
-    if (!m) m = new Date().toISOString().slice(0,7);
-    return m;
+function mes(){
+    return $("mes").value || new Date().toISOString().slice(0,7);
 }
 
-// salvar dados
 function save(){
     localStorage.setItem("finpro", JSON.stringify(db));
 }
 
-// ADD TRANSAÇÃO
+function f(v){
+    return (v||0).toLocaleString("pt-BR",{
+        style:"currency",
+        currency:"BRL"
+    });
+}
+
+</script>
+<script>
+
 function add(){
+
     let m = mes();
-
-    if(!m){
-        m = new Date().toISOString().slice(0,7);
-    }
-
     let n = $("nome").value;
     let v = parseFloat($("valor").value);
     let c = $("cat").value;
@@ -199,8 +195,8 @@ function add(){
     update();
 }
 
-// DELETE
 function del(id){
+
     let m = mes();
 
     if(!db[m]) return;
@@ -212,16 +208,64 @@ function del(id){
     update();
 }
 
-// UPDATE PRINCIPAL
-function update() {
-    const m = mes();
-    const arr = db[m] || [];
+/* =========================
+   IMPORTADOR DE EXTRATO
+========================= */
 
-    let entradas = 0;
-    let saidas = 0;
-    let investido = 0;
+function importarExtrato(){
 
-    const cat = {
+    let texto = $("extrato").value;
+    if(!texto) return;
+
+    let m = mes();
+
+    if(!db[m]) db[m] = [];
+
+    let linhas = texto.split("\n");
+
+    linhas.forEach(l => {
+
+        l = l.trim();
+        if(!l) return;
+
+        let match = l.match(/-?\d+[.,]?\d*/);
+
+        if(!match) return;
+
+        let valor = parseFloat(match[0].replace(",", "."));
+
+        let nome = l.replace(match[0], "").trim();
+
+        let cat = valor >= 0 ? "Renda" : "Essencial";
+
+        db[m].push({
+            id: Date.now() + Math.random(),
+            nome: nome || "Importado",
+            valor: Math.abs(valor),
+            cat: cat
+        });
+    });
+
+    save();
+
+    $("extrato").value = "";
+
+    update();
+}
+
+</script>
+<script>
+
+function update(){
+
+    let m = mes();
+    let arr = db[m] || [];
+
+    let e = 0;
+    let s = 0;
+    let i = 0;
+
+    let cat = {
         Essencial: 0,
         Estilo: 0,
         Investimento: 0
@@ -230,19 +274,20 @@ function update() {
     let html = "";
 
     arr.forEach(x => {
-        const valor = Number(x.valor);
 
-        if (x.cat === "Renda") {
-            entradas += valor;
+        let v = Number(x.valor);
+
+        if(x.cat === "Renda"){
+            e += v;
         } else {
-            saidas += valor;
+            s += v;
 
-            if (cat[x.cat] !== undefined) {
-                cat[x.cat] += valor;
+            if(cat[x.cat] !== undefined){
+                cat[x.cat] += v;
             }
 
-            if (x.cat === "Investimento") {
-                investido += valor;
+            if(x.cat === "Investimento"){
+                i += v;
             }
         }
 
@@ -253,379 +298,75 @@ function update() {
                     <small style="color:var(--dim)">${x.cat}</small>
                 </div>
                 <div>
-                    R$ ${valor.toFixed(2)}
+                    ${f(v)}
                     <button class="btn-del" onclick="del(${x.id})">×</button>
                 </div>
             </div>
         `;
     });
 
-    // lista
-    $("lista").innerHTML = html || "<small style='color:var(--dim)'>Sem lançamentos neste mês.</small>";
+    // LISTA
+    $("lista").innerHTML = html || "Sem lançamentos neste mês";
 
     // KPIs
-    $("e").innerText = `R$ ${entradas.toFixed(2)}`;
-    $("s").innerText = `R$ ${saidas.toFixed(2)}`;
+    $("e").innerText = f(e);
+    $("s").innerText = f(s);
+    $("saldo").innerText = f(e - s);
 
-    const saldo = entradas - saidas;
-    $("saldo").innerText = `R$ ${saldo.toFixed(2)}`;
-    $("saldo").style.color = saldo < 0 ? "var(--danger)" : "var(--primary)";
-
-    // score simples e estável
-    let score = 50;
-
-    if (entradas > 0) {
-        if (entradas > saidas) score += 20;
-        if (investido >= entradas * 0.2) score += 20;
-        if (saidas <= entradas * 0.7) score += 10;
-    } else {
-        score = 0;
-    }
-
-    score = Math.min(Math.max(score, 0), 100);
-
-    $("score").innerText = score;
-    $("status").innerText =
-        score >= 80 ? "Excelente" :
-        score >= 50 ? "Regular" : "Atenção";
-
-    $("metaTxt").innerText =
-        `Meta (20%): R$ ${(entradas * 0.2).toFixed(2)} | Investido: R$ ${investido.toFixed(2)}`;
-
-    $("insights").innerText =
-        entradas < saidas && entradas > 0
-            ? "⚠️ Gastos maiores que a renda"
-            : "✔ Finanças equilibradas";
-
-    // gráficos seguros
-    const dados = [cat.Essencial, cat.Estilo, cat.Investimento];
-
-    if (typeof Chart !== "undefined") {
-        if (window.c1) window.c1.destroy();
-
-        window.c1 = new Chart($("chart1"), {
-            type: "doughnut",
-            data: {
-                labels: ["Essencial", "Estilo", "Investimento"],
-                datasets: [{
-                    data: dados,
-                    backgroundColor: ["#ef4444", "#f59e0b", "#10b981"],
-                    borderWidth: 0
-                }]
-            },
-            options: {
-                plugins: {
-                    legend: {
-                        position: "bottom",
-                        labels: { color: "#f8fafc" }
-                    }
-                }
-            }
-        });
-    }
-}
-
-    // SCORE SIMPLES E ESTÁVEL
-    let score = 50;
+    // SCORE
+    let score = 0;
 
     if(e > 0){
+        score = 50;
+
         if(e > s) score += 20;
-        if(i > e * 0.2) score += 20;
-        if(s < e * 0.7) score += 10;
+        if(i >= e * 0.2) score += 20;
+        if(s <= e * 0.7) score += 10;
     }
 
-    $("score").innerText = Math.min(score,100);
+    score = Math.min(Math.max(score,0),100);
+
+    $("score").innerText = score;
 
     $("status").innerText =
         score >= 80 ? "Excelente" :
         score >= 50 ? "Regular" :
         "Atenção";
 
+    // META
     $("metaTxt").innerText =
         `Meta 20%: ${f(e * 0.2)} | Investido: ${f(i)}`;
 
+    // INSIGHTS
     $("insights").innerText =
         e < s && e > 0
         ? "⚠ Gastos acima da renda"
-        : "✔ Finanças sob controle";
+        : "✔ Finanças equilibradas";
 
-    // CHART (SEGURADO)
+    // CHART (ESTÁVEL)
     let dados = [
         cat.Essencial,
         cat.Estilo,
         cat.Investimento
     ];
 
-    if(!window.Chart) return;
-
-    if(c1){
-        c1.data.datasets[0].data = dados;
-        c1.update();
+    if(window.chart){
+        window.chart.data.datasets[0].data = dados;
+        window.chart.update();
     } else {
-        c1 = new Chart($("chart1"),{
-            type:"doughnut",
-            data:{
-                labels:["Essencial","Estilo","Investimento"],
-                datasets:[{
-                    data:dados,
-                    backgroundColor:['#ef4444','#f59e0b','#10b981'],
-                    borderWidth:0
+        window.chart = new Chart($("chart1"), {
+            type: "doughnut",
+            data: {
+                labels: ["Essencial","Estilo","Investimento"],
+                datasets: [{
+                    data: dados
                 }]
             }
         });
     }
 }
 
-// inicialização
+// INICIALIZAÇÃO
 update();
-</script>
-<script>
-
-/* =========================
-   COMPARAÇÃO ENTRE MESES
-========================= */
-function compararMeses(){
-
-    let meses = Object.keys(db).sort();
-
-    if(meses.length < 2){
-        $("insights").innerText += "\n📊 Poucos dados para comparação mensal";
-        return;
-    }
-
-    let atual = meses[meses.length - 1];
-    let anterior = meses[meses.length - 2];
-
-    let a = db[atual] || [];
-    let b = db[anterior] || [];
-
-    let gastoA = a.filter(x=>x.cat!=="Renda").reduce((s,x)=>s+x.valor,0);
-    let gastoB = b.filter(x=>x.cat!=="Renda").reduce((s,x)=>s+x.valor,0);
-
-    let diff = gastoA - gastoB;
-
-    let msg =
-        diff > 0
-        ? `📈 Gastos aumentaram R$ ${diff.toFixed(2)} vs mês anterior`
-        : `📉 Gastos reduziram R$ ${Math.abs(diff).toFixed(2)} vs mês anterior`;
-
-    $("insights").innerText += "\n" + msg;
-}
-
-/* =========================
-   TOP GASTOS
-========================= */
-function topGastos(arr){
-
-    let gastos = arr.filter(x=>x.cat!=="Renda");
-
-    return gastos
-        .sort((a,b)=>b.valor-a.valor)
-        .slice(0,3)
-        .map(x=>`• ${x.nome}: ${f(x.valor)}`)
-        .join("\n");
-}
-
-/* =========================
-   ANÁLISE AVANÇADA
-========================= */
-function analiseAvancada(e,s,i,cat){
-
-    let texto = "";
-
-    let dependencia = s / (e || 1);
-
-    if(dependencia > 0.9){
-        texto += "🚨 Alto risco financeiro\n";
-    } else if(dependencia > 0.7){
-        texto += "⚠ Atenção nos gastos\n";
-    } else {
-        texto += "✔ Saúde financeira ok\n";
-    }
-
-    if(i < e * 0.2){
-        texto += "💡 Pouco investimento\n";
-    }
-
-    if(cat.Essencial > e * 0.6){
-        texto += "🏠 Essenciais altos demais\n";
-    }
-
-    return texto;
-}
-
-/* =========================
-   UPDATE EXTENDIDO
-========================= */
-function updateAvancado(){
-
-    let m = mes();
-    let arr = db[m] || [];
-
-    let e=0,s=0,i=0;
-
-    let cat={Essencial:0,Estilo:0,Investimento:0};
-
-    arr.forEach(x=>{
-
-        if(x.cat==="Renda"){
-            e += x.valor;
-        } else {
-            s += x.valor;
-            cat[x.cat] = (cat[x.cat]||0)+x.valor;
-            if(x.cat==="Investimento") i += x.valor;
-        }
-    });
-
-    let analise = analiseAvancada(e,s,i,cat);
-    let top = topGastos(arr);
-
-    $("insights").innerText += "\n\n🧠 Análise Avançada:\n" + analise;
-    $("insights").innerText += "\n🏆 Top gastos:\n" + top;
-
-    compararMeses();
-}
-
-/* =========================
-   HOOK FINAL
-========================= */
-const originalUpdate = update;
-
-update = function(){
-    originalUpdate();
-    updateAvancado();
-};
 
 </script>
-<script>
-
-/* =====================================================
-   ALERTAS FINANCEIROS (INSERIR DENTRO DO UPDATE FINAL)
-===================================================== */
-function alertasFinanceiros(e, s, i){
-
-    let msg = [];
-
-    if(e - s < 0){
-        msg.push("🚨 Saldo negativo neste mês");
-    }
-
-    if(e > 0 && s > e * 0.9){
-        msg.push("⚠ Gastos muito altos comparado à renda");
-    }
-
-    if(e > 0 && i < e * 0.15){
-        msg.push("💡 Investimento abaixo do ideal (20%)");
-    }
-
-    if(msg.length > 0){
-        $("insights").innerText += "\n\n🔔 ALERTAS:\n" + msg.join("\n");
-    }
-}
-
-/* =====================================================
-   EVOLUÇÃO MENSAL SIMPLES (SEM GRÁFICO NOVO)
-===================================================== */
-function evolucaoMensal(){
-
-    let meses = Object.keys(db).sort();
-
-    let evolucao = meses.map(m => {
-        let arr = db[m] || [];
-
-        return arr.reduce((acc, x) => {
-            if(x.cat !== "Renda") acc += x.valor;
-            return acc;
-        }, 0);
-    });
-
-    console.log("📊 Evolução mensal:", { meses, evolucao });
-}
-
-/* =====================================================
-   INTEGRAÇÃO FINAL (EXTENDE update EXISTENTE)
-===================================================== */
-const updateOriginal = update;
-
-update = function(){
-
-    // roda sistema original primeiro
-    function update() {
-
-    let m = mes();
-    let arr = db[m] || [];
-
-    let e = 0, s = 0, i = 0;
-    let cat = {Essencial:0,Estilo:0,Investimento:0};
-
-    let html = "";
-
-    arr.forEach(x => {
-        if(x.cat === "Renda") e += x.valor;
-        else {
-            s += x.valor;
-            if(cat[x.cat] !== undefined) cat[x.cat] += x.valor;
-            if(x.cat === "Investimento") i += x.valor;
-        }
-
-        html += `
-            <div class="item">
-                <div>${x.nome}<br><small>${x.cat}</small></div>
-                <div>R$ ${x.valor.toFixed(2)} <button class="btn-del" onclick="del(${x.id})">×</button></div>
-            </div>
-        `;
-    });
-
-    $("lista").innerHTML = html;
-
-    $("e").innerText = f(e);
-    $("s").innerText = f(s);
-    $("saldo").innerText = f(e - s);
-
-    let score = 0;
-    if(e > 0){
-        score = 50;
-        if(e > s) score += 20;
-        if(i >= e * 0.2) score += 20;
-        if(s <= e * 0.7) score += 10;
-    }
-
-    $("score").innerText = Math.min(score,100);
-
-    $("status").innerText =
-        score >= 80 ? "Excelente" :
-        score >= 50 ? "Regular" :
-        "Atenção";
-
-    $("metaTxt").innerText =
-        `Meta 20%: ${f(e*0.2)} | Investido: ${f(i)}`;
-
-    $("insights").innerText =
-        e < s && e > 0
-        ? "⚠ Gastos acima da renda"
-        : "✔ Finanças equilibradas";
-
-    const dados = [cat.Essencial, cat.Estilo, cat.Investimento];
-
-    if(window.c1){
-        window.c1.data.datasets[0].data = dados;
-        window.c1.update();
-    } else {
-        window.c1 = new Chart($("chart1"),{
-            type:"doughnut",
-            data:{
-                labels:["Essencial","Estilo","Investimento"],
-                datasets:[{data:dados}]
-            }
-        });
-    }
-
-    // funções extras (SEM sobrescrever update)
-    alertasFinanceiros(e,s,i);
-    evolucaoMensal();
-}
-
-</script>
-
-</body>
-</html>
