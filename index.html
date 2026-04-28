@@ -550,6 +550,9 @@ const updateOriginal = update;
 update = function(){
 
     // roda sistema original primeiro
+    const updateOriginal = updateAvancado;
+
+function update(){
     updateOriginal();
 
     let m = mes();
@@ -567,10 +570,9 @@ update = function(){
         }
     });
 
-    // adiciona inteligência
     alertasFinanceiros(e, s, i);
     evolucaoMensal();
-};
+}
 
 </script>
 
