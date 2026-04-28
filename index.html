@@ -1,200 +1,234 @@
-let db = JSON.parse(localStorage.getItem("financas_pro")) || {};
-let chart;
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Finance PRO</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root{
+    --bg:#0b0e11;
+    --card:#151921;
+    --primary:#00d1b2;
+    --danger:#ff4757;
+    --text:#fff;
+    --dim:#8a94a6;
+}
+
+*{margin:0;padding:0;box-sizing:border-box}
+
+body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:Arial;
+    padding:20px;
+}
+
+.container{max-width:900px;margin:auto}
+
+.card{
+    background:var(--card);
+    padding:15px;
+    border-radius:12px;
+    margin-bottom:15px;
+}
+
+input,select,button{
+    padding:10px;
+    border-radius:8px;
+    border:none;
+    margin:5px;
+}
+
+button{
+    background:var(--primary);
+    cursor:pointer;
+    font-weight:bold;
+}
+
+.item{
+    display:flex;
+    justify-content:space-between;
+    padding:8px;
+    border-bottom:1px solid #222;
+}
+
+.btn{
+    background:none;
+    color:var(--danger);
+    cursor:pointer;
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- INPUT -->
+<div class="card">
+<input type="month" id="mes">
+<input id="nome" placeholder="Descrição">
+<input id="valor" type="number" placeholder="Valor">
+
+<select id="cat">
+    <option value="Renda">Renda</option>
+    <option value="Essencial">Essencial</option>
+    <option value="Estilo">Estilo</option>
+    <option value="Investimento">Investimento</option>
+</select>
+
+<button onclick="add()">Adicionar</button>
+</div>
+
+<!-- KPIS -->
+<div class="card">
+<h3 id="e">Entradas: 0</h3>
+<h3 id="s">Saídas: 0</h3>
+<h3 id="saldo">Saldo: 0</h3>
+<h3 id="score">Score: 0</h3>
+</div>
+
+<!-- META -->
+<div class="card">
+<h3>Meta de investimento (20%)</h3>
+<div id="metaTxt"></div>
+</div>
+
+<!-- INSIGHTS -->
+<div class="card">
+<h3>Insights</h3>
+<div id="insights"></div>
+</div>
+
+<!-- LISTA -->
+<div class="card" id="lista"></div>
+
+<!-- GRÁFICOS -->
+<div class="card">
+<canvas id="chart1"></canvas>
+</div>
+
+<div class="card">
+<canvas id="chart2"></canvas>
+</div>
+
+</div>
+
+<script>
+
+let db = JSON.parse(localStorage.getItem("finpro")) || {};
+let c1, c2;
 
 const $ = id => document.getElementById(id);
 
-$("mesInput").value = new Date().toISOString().slice(0,7);
+$("mes").value = new Date().toISOString().slice(0,7);
 
-function getMes(){
-    return $("mesInput").value || new Date().toISOString().slice(0,7);
+function mes(){ return $("mes").value; }
+
+function save(){
+    localStorage.setItem("finpro", JSON.stringify(db));
 }
 
-function salvar(){
-    localStorage.setItem("financas_pro", JSON.stringify(db));
-}
+function add(){
 
-/* =========================
-   ADICIONAR
-========================= */
-function adicionar(){
+    let m = mes();
+    let n = $("nome").value;
+    let v = parseFloat($("valor").value);
+    let c = $("cat").value;
 
-    const mes = getMes();
-    const nome = $("nome").value;
-    const valor = parseFloat($("valor").value);
-    const categoria = $("categoria").value;
+    if(!n || !v) return;
 
-    if(!nome || isNaN(valor)) return;
+    if(!db[m]) db[m]=[];
 
-    if(!db[mes]) db[mes] = [];
+    db[m].push({id:Date.now(),nome:n,valor:v,cat:c});
 
-    db[mes].push({
-        id: Date.now(),
-        nome,
-        valor,
-        categoria
-    });
-
-    salvar();
+    save();
     $("nome").value="";
     $("valor").value="";
-    atualizarGeral();
+    update();
 }
 
-/* =========================
-   REMOVER
-========================= */
-function remover(id){
-    const mes = getMes();
-    if(!db[mes]) return;
-
-    db[mes] = db[mes].filter(t => t.id !== id);
-    salvar();
-    atualizarGeral();
+function del(id){
+    let m = mes();
+    db[m] = db[m].filter(x=>x.id!==id);
+    save();
+    update();
 }
 
-/* =========================
-   INSIGHTS (CORRIGIDO)
-========================= */
-function calcularInsights(transacoes, entradas, saidas){
+function update(){
 
-    let texto = "";
+    let m = mes();
+    let arr = db[m] || [];
 
-    let gastos = transacoes.filter(t => t.categoria !== "Renda");
+    let e=0,s=0,i=0;
+    let cat = {Essencial:0,Estilo:0,Investimento:0};
 
-    let top = [...gastos]
-        .sort((a,b)=>b.valor-a.valor)
-        .slice(0,3);
+    let html="";
 
-    if(entradas - saidas < 0){
-        texto += "🚨 Saldo negativo<br><br>";
-    }
+    arr.forEach(x=>{
 
-    texto += "🏆 Top 3 gastos:<br>";
-
-    if(top.length === 0){
-        texto += "- Nenhum gasto<br>";
-    } else {
-        top.forEach(t=>{
-            texto += `- ${t.nome}: R$ ${t.valor.toFixed(2)}<br>`;
-        });
-    }
-
-    return texto;
-}
-
-/* =========================
-   SCORE (CORRIGIDO)
-========================= */
-function calcularScore(entradas, saidas, investido){
-
-    let score = 50;
-
-    if(entradas > saidas) score += 20;
-    if(investido > entradas * 0.2) score += 20;
-    if(saidas < entradas * 0.7) score += 10;
-
-    return Math.min(Math.max(score,0),100);
-}
-
-/* =========================
-   COMPARAÇÃO MÊS (SEGURA)
-========================= */
-function compararMes(mes){
-
-    let meses = Object.keys(db).sort();
-    let i = meses.indexOf(mes);
-
-    if(i <= 0) return "📊 Sem mês anterior";
-
-    let atual = db[mes] || [];
-    let anterior = db[meses[i-1]] || [];
-
-    let gAtual = atual.reduce((a,t)=>a+(t.categoria!=="Renda"?t.valor:0),0);
-    let gAnt = anterior.reduce((a,t)=>a+(t.categoria!=="Renda"?t.valor:0),0);
-
-    let diff = gAtual - gAnt;
-
-    if(gAnt === 0) return "📊 Comparação indisponível";
-
-    return diff >= 0
-    ? `📈 +R$ ${diff.toFixed(2)} vs mês anterior`
-    : `📉 -R$ ${Math.abs(diff).toFixed(2)} vs mês anterior`;
-}
-
-/* =========================
-   MAIN UPDATE (ESTÁVEL)
-========================= */
-function atualizarGeral(){
-
-    const mes = getMes();
-    const transacoes = db[mes] || [];
-
-    let entradas = 0;
-    let saidas = 0;
-    let investido = 0;
-
-    let categorias = {
-        Essencial:0,
-        Estilo:0,
-        Investimento:0
-    };
-
-    let html = "";
-
-    transacoes.forEach(t=>{
-
-        if(t.categoria === "Renda"){
-            entradas += t.valor;
-        } else {
-            saidas += t.valor;
-            categorias[t.categoria] = (categorias[t.categoria] || 0) + t.valor;
-
-            if(t.categoria === "Investimento"){
-                investido += t.valor;
-            }
+        if(x.cat==="Renda") e+=x.valor;
+        else {
+            s+=x.valor;
+            cat[x.cat]+=x.valor;
+            if(x.cat==="Investimento") i+=x.valor;
         }
 
-        html += `
-        <div class="item-lista">
-            <span>${t.nome}</span>
+        html+=`
+        <div class="item">
+            <span>${x.nome}</span>
             <span>
-                R$ ${t.valor.toFixed(2)}
-                <button class="btn-delete" onclick="remover(${t.id})">✕</button>
+                ${x.valor}
+                <button class="btn" onclick="del(${x.id})">x</button>
             </span>
         </div>`;
     });
 
-    $("lista").innerHTML = html;
+    $("lista").innerHTML=html;
 
-    $("kpi-entradas").innerText = "R$ " + entradas.toFixed(2);
-    $("kpi-saidas").innerText = "R$ " + saidas.toFixed(2);
-    $("kpi-saldo").innerText = "R$ " + (entradas - saidas).toFixed(2);
+    $("e").innerText="Entradas: "+e;
+    $("s").innerText="Saídas: "+s;
+    $("saldo").innerText="Saldo: "+(e-s);
 
-    /* INSIGHTS */
-    $("insights").innerHTML = calcularInsights(transacoes, entradas, saidas);
+    let score = 50;
+    if(e>s) score+=20;
+    if(i>e*0.2) score+=20;
+    if(s<e*0.7) score+=10;
 
-    /* SCORE */
-    $("score").innerText = "Score: " + calcularScore(entradas, saidas, investido);
+    $("score").innerText="Score: "+Math.min(score,100);
 
-    /* COMPARAÇÃO */
-    $("comparacao").innerText = compararMes(mes);
+    let meta = e*0.2;
+    $("metaTxt").innerText=`Meta: ${meta.toFixed(2)} | Investido: ${i}`;
 
-    /* GRÁFICO */
-    if(chart) chart.destroy();
+    $("insights").innerText =
+        e<s ? "🚨 Gastos maiores que entradas" : "✔ Financeiro estável";
 
-    chart = new Chart($("chart"),{
+    if(c1) c1.destroy();
+    if(c2) c2.destroy();
+
+    c1 = new Chart($("chart1"),{
         type:"doughnut",
         data:{
-            labels:["Essencial","Estilo","Investimento"],
-            datasets:[{
-                data:[
-                    categorias.Essencial,
-                    categorias.Estilo,
-                    categorias.Investimento
-                ]
-            }]
+            labels:Object.keys(cat),
+            datasets:[{data:Object.values(cat)}]
+        }
+    });
+
+    c2 = new Chart($("chart2"),{
+        type:"bar",
+        data:{
+            labels:["Entradas","Saídas"],
+            datasets:[{data:[e,s]}]
         }
     });
 }
 
-atualizarGeral();
+update();
+
+</script>
+
+</body>
+</html>
