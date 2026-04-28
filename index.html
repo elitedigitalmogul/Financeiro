@@ -4,10 +4,12 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Finance PRO | Dashboard</title>
+
+<!-- CORREÇÃO CRÍTICA: Chart.js correto -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-:root {
+:root{
     --bg:#0f172a;
     --card:#1e293b;
     --primary:#10b981;
@@ -17,64 +19,19 @@
 }
 
 *{margin:0;padding:0;box-sizing:border-box;}
-
-body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:sans-serif;
-    padding:20px;
-}
-
+body{background:var(--bg);color:var(--text);font-family:sans-serif;padding:20px;}
 .container{max-width:1000px;margin:auto;}
-
-.card{
-    background:var(--card);
-    padding:20px;
-    border-radius:16px;
-    margin-bottom:20px;
-}
-
-.grid-form{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:10px;
-}
-
-input,select,button{
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #334155;
-    background:#0f172a;
-    color:#fff;
-}
-
+.card{background:var(--card);padding:20px;border-radius:16px;margin-bottom:20px;}
+.grid-form{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:10px;}
+input,select,button{padding:12px;border-radius:10px;border:1px solid #334155;background:#0f172a;color:#fff;}
 button{background:var(--primary);border:none;cursor:pointer;}
-
-.kpi-group{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-}
-
-.item{
-    display:flex;
-    justify-content:space-between;
-    padding:10px;
-    border-bottom:1px solid #334155;
-}
-
-.btn-del{
-    background:none;
-    border:none;
-    color:var(--danger);
-    cursor:pointer;
-}
-
+.kpi-group{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:15px;}
+.item{display:flex;justify-content:space-between;padding:10px;border-bottom:1px solid #334155;}
+.btn-del{background:none;border:none;color:var(--danger);cursor:pointer;}
 </style>
 </head>
 
 <body>
-
 <div class="container">
 
 <div class="card">
@@ -93,9 +50,9 @@ button{background:var(--primary);border:none;cursor:pointer;}
 </div>
 
 <div class="kpi-group">
-<div class="card">Entradas<span id="e">R$ 0</span></div>
-<div class="card">Saídas<span id="s">R$ 0</span></div>
-<div class="card">Saldo<span id="saldo">R$ 0</span></div>
+<div class="card">Entradas<br><span id="e">R$ 0,00</span></div>
+<div class="card">Saídas<br><span id="s">R$ 0,00</span></div>
+<div class="card">Saldo<br><span id="saldo">R$ 0,00</span></div>
 </div>
 
 <div class="card">
@@ -110,36 +67,46 @@ button{background:var(--primary);border:none;cursor:pointer;}
 <div class="card">
 <div id="insights"></div>
 <div id="metaTxt"></div>
-<hr>
+<hr style="margin:15px 0;border-top:1px solid #334155;">
 <div id="lista"></div>
 </div>
 
 </div>
 
 <script>
+/* ===================== SEGURANÇA BASE ===================== */
+let db = {};
+try {
+    db = JSON.parse(localStorage.getItem("finpro")) || {};
+} catch(e){
+    db = {};
+    console.warn("LocalStorage corrompido, resetado.");
+}
 
-let db = JSON.parse(localStorage.getItem("finpro")) || {};
 let c1;
-
 const $ = id => document.getElementById(id);
+const f = v => (isNaN(v)?0:v).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
 
 $("mes").value = new Date().toISOString().slice(0,7);
-
-let timer;
 
 function mes(){ return $("mes").value; }
 
 function save(){
-    localStorage.setItem("finpro", JSON.stringify(db));
+    try{
+        localStorage.setItem("finpro", JSON.stringify(db));
+    }catch(e){
+        console.warn("Erro ao salvar localStorage");
+    }
 }
 
+/* ===================== ADD ===================== */
 function add(){
     let m = mes();
-    let n = $("nome").value;
+    let n = $("nome").value?.trim();
     let v = parseFloat($("valor").value);
     let c = $("cat").value;
 
-    if(!n || !v) return;
+    if(!n || isNaN(v) || v <= 0) return;
 
     if(!db[m]) db[m]=[];
     db[m].push({id:Date.now(), nome:n, valor:v, cat:c});
@@ -147,98 +114,94 @@ function add(){
     save();
     $("nome").value="";
     $("valor").value="";
-
-    updateDebounced();
+    update();
 }
 
+/* ===================== DELETE ===================== */
 function del(id){
     let m = mes();
+    if(!db[m]) return;
+
     db[m] = db[m].filter(x=>x.id!==id);
     save();
-    updateDebounced();
+    update();
 }
 
-/* ================= OTIMIZAÇÃO ================= */
-
-function updateDebounced(){
-    clearTimeout(timer);
-    timer = setTimeout(update, 80);
-}
-
-/* ================= FUNÇÕES ================= */
-
+/* ===================== UPDATE BLINDADO ===================== */
 function update(){
-
     let m = mes();
-    let arr = db[m]||[];
+    let arr = db[m] || [];
 
     let e=0,s=0,i=0;
     let cat={Essencial:0,Estilo:0,Investimento:0};
 
     let html="";
 
-    arr.forEach(x=>{
-
+    for(let x of arr){
         if(x.cat==="Renda") e+=x.valor;
         else{
             s+=x.valor;
-            cat[x.cat]+=x.valor;
+            if(cat[x.cat] !== undefined) cat[x.cat]+=x.valor;
             if(x.cat==="Investimento") i+=x.valor;
         }
 
         html+=`
         <div class="item">
-            <div>${x.nome}<br><small>${x.cat}</small></div>
-            <div>R$ ${x.valor.toFixed(2)} <button class="btn-del" onclick="del(${x.id})">×</button></div>
+            <div>${x.nome}<br><small style="color:var(--dim)">${x.cat}</small></div>
+            <div>${f(x.valor)} <button class="btn-del" onclick="del(${x.id})">×</button></div>
         </div>`;
-    });
+    }
 
-    $("lista").innerHTML = html;
+    $("lista").innerHTML = html || "";
 
-    $("e").innerText="R$ "+e.toFixed(2);
-    $("s").innerText="R$ "+s.toFixed(2);
-    $("saldo").innerText="R$ "+(e-s).toFixed(2);
+    $("e").innerText = f(e);
+    $("s").innerText = f(s);
+    $("saldo").innerText = f(e-s);
 
-    let score=50;
-    if(e>s)score+=20;
-    if(i>e*0.2)score+=20;
-    if(s<e*0.7)score+=10;
+    let score = (e>0)?50:0;
+    if(e>s) score+=20;
+    if(i>e*0.2) score+=20;
+    if(s<e*0.7) score+=10;
 
-    $("score").innerText=Math.min(score,100);
-    $("status").innerText=score>=80?"Bom":"Ok";
+    $("score").innerText = Math.min(score,100);
+    $("status").innerText =
+        score>=80?"Excelente":
+        score>=50?"Regular":"Atenção";
 
-    $("metaTxt").innerText=`Meta 20%: R$ ${(e*0.2).toFixed(2)} | Inv: R$ ${i.toFixed(2)}`;
+    $("metaTxt").innerText =
+        `Meta Inv. (20%): ${f(e*0.2)} | Total Inv.: ${f(i)}`;
 
-    $("insights").innerText = e<s ? "⚠️ Gastos altos" : "✔ OK";
+    $("insights").innerText =
+        (e>0 && e<s)
+        ?"⚠️ Gastos maiores que renda"
+        :"✔ OK";
 
-    /* ================= CHART OTIMIZADO ================= */
+    /* ===================== CHART SAFE ===================== */
+    const dados = [cat.Essencial, cat.Estilo, cat.Investimento];
 
-    if(c1){
-        c1.data.datasets[0].data=[
-            cat.Essencial,
-            cat.Estilo,
-            cat.Investimento
-        ];
-        c1.update();
-    } else {
-        c1=new Chart($("chart1"),{
-            type:"doughnut",
-            data:{
-                labels:["Essencial","Estilo","Investimento"],
-                datasets:[{
-                    data:[
-                        cat.Essencial,
-                        cat.Estilo,
-                        cat.Investimento
-                    ]
-                }]
-            }
-        });
+    try{
+        if(c1){
+            c1.data.datasets[0].data = dados;
+            c1.update();
+        }else{
+            let el = $("chart1");
+            if(!el) return;
+
+            c1 = new Chart(el,{
+                type:"doughnut",
+                data:{
+                    labels:["Essencial","Estilo","Investimento"],
+                    datasets:[{data:dados}]
+                }
+            });
+        }
+    }catch(e){
+        console.warn("Erro no gráfico:",e);
     }
 }
 
-update();
-
+/* ===================== INIT SEGURO ===================== */
+window.addEventListener("DOMContentLoaded", update);
 </script>
 
 </body>
