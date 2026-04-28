@@ -157,8 +157,10 @@ const f = v => (v || 0).toLocaleString('pt-BR',{
 $("mes").value = new Date().toISOString().slice(0,7);
 
 // garante mês válido
-function mes(){
-    return $("mes").value || new Date().toISOString().slice(0,7);
+function mes() {
+    let m = $("mes").value;
+    if (!m) m = new Date().toISOString().slice(0,7);
+    return m;
 }
 
 // salvar dados
@@ -211,58 +213,117 @@ function del(id){
 }
 
 // UPDATE PRINCIPAL
-function update(){
+function update() {
+    const m = mes();
+    const arr = db[m] || [];
 
-    let m = mes();
-    if(!db[m]) db[m] = [];
+    let entradas = 0;
+    let saidas = 0;
+    let investido = 0;
 
-    let arr = db[m];
-
-    let e = 0;
-    let s = 0;
-    let i = 0;
-
-    let cat = {
-        Essencial:0,
-        Estilo:0,
-        Investimento:0
+    const cat = {
+        Essencial: 0,
+        Estilo: 0,
+        Investimento: 0
     };
 
     let html = "";
 
     arr.forEach(x => {
+        const valor = Number(x.valor);
 
-        if(x.cat === "Renda"){
-            e += x.valor;
+        if (x.cat === "Renda") {
+            entradas += valor;
         } else {
-            s += x.valor;
+            saidas += valor;
 
-            cat[x.cat] = (cat[x.cat] || 0) + x.valor;
+            if (cat[x.cat] !== undefined) {
+                cat[x.cat] += valor;
+            }
 
-            if(x.cat === "Investimento"){
-                i += x.valor;
+            if (x.cat === "Investimento") {
+                investido += valor;
             }
         }
 
         html += `
-        <div class="item">
-            <div>
-                ${x.nome}<br>
-                <small style="color:var(--dim)">${x.cat}</small>
+            <div class="item">
+                <div>
+                    ${x.nome}<br>
+                    <small style="color:var(--dim)">${x.cat}</small>
+                </div>
+                <div>
+                    R$ ${valor.toFixed(2)}
+                    <button class="btn-del" onclick="del(${x.id})">×</button>
+                </div>
             </div>
-
-            <div>
-                ${f(x.valor)}
-                <button class="btn-del" onclick="del(${x.id})">×</button>
-            </div>
-        </div>`;
+        `;
     });
 
-    $("lista").innerHTML = html || "<small style='color:var(--dim)'>Sem transações</small>";
+    // lista
+    $("lista").innerHTML = html || "<small style='color:var(--dim)'>Sem lançamentos neste mês.</small>";
 
-    $("e").innerText = f(e);
-    $("s").innerText = f(s);
-    $("saldo").innerText = f(e - s);
+    // KPIs
+    $("e").innerText = `R$ ${entradas.toFixed(2)}`;
+    $("s").innerText = `R$ ${saidas.toFixed(2)}`;
+
+    const saldo = entradas - saidas;
+    $("saldo").innerText = `R$ ${saldo.toFixed(2)}`;
+    $("saldo").style.color = saldo < 0 ? "var(--danger)" : "var(--primary)";
+
+    // score simples e estável
+    let score = 50;
+
+    if (entradas > 0) {
+        if (entradas > saidas) score += 20;
+        if (investido >= entradas * 0.2) score += 20;
+        if (saidas <= entradas * 0.7) score += 10;
+    } else {
+        score = 0;
+    }
+
+    score = Math.min(Math.max(score, 0), 100);
+
+    $("score").innerText = score;
+    $("status").innerText =
+        score >= 80 ? "Excelente" :
+        score >= 50 ? "Regular" : "Atenção";
+
+    $("metaTxt").innerText =
+        `Meta (20%): R$ ${(entradas * 0.2).toFixed(2)} | Investido: R$ ${investido.toFixed(2)}`;
+
+    $("insights").innerText =
+        entradas < saidas && entradas > 0
+            ? "⚠️ Gastos maiores que a renda"
+            : "✔ Finanças equilibradas";
+
+    // gráficos seguros
+    const dados = [cat.Essencial, cat.Estilo, cat.Investimento];
+
+    if (typeof Chart !== "undefined") {
+        if (window.c1) window.c1.destroy();
+
+        window.c1 = new Chart($("chart1"), {
+            type: "doughnut",
+            data: {
+                labels: ["Essencial", "Estilo", "Investimento"],
+                datasets: [{
+                    data: dados,
+                    backgroundColor: ["#ef4444", "#f59e0b", "#10b981"],
+                    borderWidth: 0
+                }]
+            },
+            options: {
+                plugins: {
+                    legend: {
+                        position: "bottom",
+                        labels: { color: "#f8fafc" }
+                    }
+                }
+            }
+        });
+    }
+}
 
     // SCORE SIMPLES E ESTÁVEL
     let score = 50;
