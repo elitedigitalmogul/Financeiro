@@ -5,10 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Fintech Pro Dashboard</title>
 
-<!-- FIX: Chart.js correto -->
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<!-- Fonte -->
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 
 <style>
@@ -21,7 +18,7 @@
     --danger: #ff4757;
 }
 
-* { margin: 0; padding: 0; box-sizing: border-box; }
+* { margin:0; padding:0; box-sizing:border-box; }
 
 body {
     font-family: 'Inter', sans-serif;
@@ -30,80 +27,64 @@ body {
     padding: 20px;
 }
 
-.container { max-width: 1000px; margin: auto; }
+.container { max-width: 1000px; margin:auto; }
 
 .card {
     background: var(--card-bg);
-    border-radius: 16px;
     padding: 20px;
+    border-radius: 16px;
     margin-bottom: 20px;
     border: 1px solid rgba(255,255,255,0.05);
 }
 
 .grid-kpis {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-    gap: 15px;
-    margin-bottom: 20px;
+    display:grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px,1fr));
+    gap:15px;
+    margin-bottom:20px;
 }
 
 .kpi-label { color: var(--text-dim); font-size: 0.8rem; }
 .kpi-value { font-size: 1.5rem; font-weight: 800; }
 
 .input-group {
-    display: flex;
-    gap: 10px;
-    flex-wrap: wrap;
+    display:flex;
+    gap:10px;
+    flex-wrap:wrap;
 }
 
 input, select, button {
-    padding: 12px;
-    border-radius: 10px;
-    border: 1px solid #2d343f;
-    background: #1f242d;
-    color: white;
+    padding:12px;
+    border-radius:10px;
+    border:1px solid #2d343f;
+    background:#1f242d;
+    color:white;
 }
 
-input { flex: 2; }
+input { flex:2; }
 
 button {
     background: var(--primary);
-    border: none;
-    font-weight: 700;
-    cursor: pointer;
+    border:none;
+    font-weight:700;
+    cursor:pointer;
 }
 
-button:hover { opacity: 0.85; }
+button:hover { opacity:0.85; }
 
 .item-lista {
-    display: flex;
-    justify-content: space-between;
-    padding: 12px;
-    border-bottom: 1px solid rgba(255,255,255,0.05);
+    display:flex;
+    justify-content:space-between;
+    padding:12px;
+    border-bottom:1px solid rgba(255,255,255,0.05);
 }
 
 .btn-delete {
-    background: none;
-    border: none;
-    color: var(--danger);
-    cursor: pointer;
-    font-size: 1.1rem;
+    background:none;
+    border:none;
+    color:var(--danger);
+    cursor:pointer;
 }
-
-.progress-container {
-    background: #1f242d;
-    height: 10px;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.progress-bar {
-    height: 100%;
-    background: var(--primary);
-    width: 0%;
-    transition: 0.5s;
-}
-
 </style>
 </head>
 
@@ -111,34 +92,49 @@ button:hover { opacity: 0.85; }
 
 <div class="container">
 
+<!-- INPUT -->
 <div class="card">
 <div class="input-group">
-    <input type="month" id="mesInput" onchange="atualizarGeral()">
-    <input type="text" id="nome" placeholder="Descrição">
-    <input type="number" id="valor" placeholder="Valor">
-    <select id="categoria">
-        <option value="Renda">Renda</option>
-        <option value="Essencial">Essencial</option>
-        <option value="Estilo">Estilo</option>
-        <option value="Investimento">Investimento</option>
-    </select>
-    <button onclick="adicionar()">Adicionar</button>
+<input type="month" id="mesInput" onchange="atualizarGeral()">
+<input type="text" id="nome" placeholder="Descrição">
+<input type="number" id="valor" placeholder="Valor">
+<select id="categoria">
+<option value="Renda">Renda</option>
+<option value="Essencial">Essencial</option>
+<option value="Estilo">Estilo</option>
+<option value="Investimento">Investimento</option>
+</select>
+<button onclick="adicionar()">Adicionar</button>
 </div>
 </div>
 
+<!-- KPIS -->
 <div class="grid-kpis">
 <div class="card"><div class="kpi-label">Entradas</div><div class="kpi-value" id="kpi-entradas">R$ 0</div></div>
 <div class="card"><div class="kpi-label">Saídas</div><div class="kpi-value" id="kpi-saidas">R$ 0</div></div>
 <div class="card"><div class="kpi-label">Saldo</div><div class="kpi-value" id="kpi-saldo">R$ 0</div></div>
 </div>
 
+<!-- INSIGHTS -->
+<div class="card">
+<h3>🧠 Insights</h3>
+<div id="insights"></div>
+</div>
+
+<div class="card">
+<h3>📊 Score</h3>
+<p id="score"></p>
+<p id="comparacao"></p>
+</div>
+
+<!-- LISTA -->
 <div class="card">
 <h3>Transações</h3>
 <div id="lista"></div>
 </div>
 
+<!-- GRAFICO -->
 <div class="card">
-<h3>Gráfico</h3>
 <canvas id="chart"></canvas>
 </div>
 
@@ -180,72 +176,128 @@ function adicionar(){
     });
 
     salvar();
-    $("nome").value = "";
-    $("valor").value = "";
+    $("nome").value="";
+    $("valor").value="";
     atualizarGeral();
 }
 
 function remover(id){
-
     const mes = getMes();
-
-    if(!db[mes]) return;
-
     db[mes] = db[mes].filter(t => t.id !== id);
-
     salvar();
     atualizarGeral();
 }
+
+/* =========================
+   🔥 FUNÇÕES NOVAS
+========================= */
+
+function calcularInsights(transacoes, entradas, saidas){
+
+    let top = [...transacoes]
+        .filter(t=>t.categoria!=="Renda")
+        .sort((a,b)=>b.valor-a.valor)
+        .slice(0,3);
+
+    let txt = "";
+
+    if(entradas - saidas < 0) txt += "🚨 Saldo negativo<br>";
+
+    txt += "<br>🏆 Top gastos:<br>";
+    top.forEach(t=>{
+        txt += `- ${t.nome}: R$ ${t.valor}<br>`;
+    });
+
+    return txt;
+}
+
+function calcularScore(entradas, saidas, investido){
+
+    let score = 50;
+
+    if(entradas > saidas) score += 20;
+    if(investido > entradas * 0.2) score += 20;
+    if(saidas < entradas * 0.7) score += 10;
+
+    return Math.min(score,100);
+}
+
+function compararMes(mes){
+
+    let meses = Object.keys(db).sort();
+    let i = meses.indexOf(mes);
+
+    if(i <= 0) return "Sem comparação";
+
+    let atual = db[mes] || [];
+    let ant = db[meses[i-1]] || [];
+
+    let g1 = atual.reduce((a,t)=>a+(t.categoria!=="Renda"?t.valor:0),0);
+    let g2 = ant.reduce((a,t)=>a+(t.categoria!=="Renda"?t.valor:0),0);
+
+    let diff = g1 - g2;
+
+    return diff >= 0
+    ? `📈 +R$ ${diff.toFixed(2)} vs mês anterior`
+    : `📉 -R$ ${Math.abs(diff).toFixed(2)} vs mês anterior`;
+}
+
+/* ========================= */
 
 function atualizarGeral(){
 
     const mes = getMes();
     const transacoes = db[mes] || [];
 
-    let entradas = 0;
-    let saidas = 0;
-    let cats = {Essencial:0, Estilo:0, Investimento:0};
+    let entradas=0, saidas=0, investido=0;
 
-    let html = "";
+    let html="";
 
-    transacoes.forEach(t => {
+    transacoes.forEach(t=>{
 
-        if(t.categoria === "Renda"){
-            entradas += t.valor;
-        } else {
-            saidas += t.valor;
-            cats[t.categoria] = (cats[t.categoria] || 0) + t.valor;
+        if(t.categoria==="Renda") entradas+=t.valor;
+        else {
+            saidas+=t.valor;
+            if(t.categoria==="Investimento") investido+=t.valor;
         }
 
         html += `
         <div class="item-lista">
-            <span>${t.nome}</span>
-            <span>
-                R$ ${t.valor.toFixed(2)}
-                <button class="btn-delete" onclick="remover(${t.id})">✕</button>
-            </span>
+        <span>${t.nome}</span>
+        <span>
+        R$ ${t.valor.toFixed(2)}
+        <button class="btn-delete" onclick="remover(${t.id})">✕</button>
+        </span>
         </div>`;
     });
 
     $("lista").innerHTML = html;
 
-    $("kpi-entradas").innerText = "R$ " + entradas.toFixed(2);
-    $("kpi-saidas").innerText = "R$ " + saidas.toFixed(2);
-    $("kpi-saldo").innerText = "R$ " + (entradas - saidas).toFixed(2);
+    $("kpi-entradas").innerText="R$ "+entradas.toFixed(2);
+    $("kpi-saidas").innerText="R$ "+saidas.toFixed(2);
+    $("kpi-saldo").innerText="R$ "+(entradas-saidas).toFixed(2);
 
-    renderChart(cats);
-}
+    /* INSIGHTS */
+    $("insights").innerHTML = calcularInsights(transacoes, entradas, saidas);
 
-function renderChart(cat){
+    /* SCORE */
+    $("score").innerText = "Score: "+calcularScore(entradas, saidas, investido);
 
+    $("comparacao").innerText = compararMes(mes);
+
+    /* GRAFICO */
     if(chart) chart.destroy();
 
-    chart = new Chart($("chart"), {
-        type: "doughnut",
-        data: {
-            labels: Object.keys(cat),
-            datasets: [{
-                data: Object.values(cat)
+    chart = new Chart($("chart"),{
+        type:"doughnut",
+        data:{
+            labels:["Essencial","Estilo","Investimento"],
+            datasets:[{
+                data:[
+                    transacoes.filter(t=>t.categoria==="Essencial").reduce((a,t)=>a+t.valor,0),
+                    transacoes.filter(t=>t.categoria==="Estilo").reduce((a,t)=>a+t.valor,0),
+                    investido
+                ]
             }]
         }
     });
