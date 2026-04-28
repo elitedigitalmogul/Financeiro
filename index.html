@@ -1,0 +1,230 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+<meta charset="UTF-8">
+<title>Dashboard Financeiro Pro</title>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<style>
+:root { --primary:#27ae60; --danger:#e74c3c; --info:#2980b9; --bg:#f0f2f5; }
+body { font-family: Arial; background: var(--bg); padding:20px; }
+.container { max-width:900px; margin:auto; }
+.card { background:white; padding:20px; margin-bottom:20px; border-radius:12px; }
+.grid { display:grid; grid-template-columns:1fr 1fr 1fr; gap:15px; }
+input,select,button { padding:10px; margin:5px 0; }
+button { background:var(--primary); color:white; border:none; cursor:pointer; }
+.btn-delete { color:red; background:none; border:none; cursor:pointer; }
+.progress { height:15px; background:#eee; border-radius:10px; overflow:hidden; }
+.progress-bar { height:100%; background:var(--info); width:0%; }
+.saldo-positivo { color:green; }
+.saldo-negativo { color:red; }
+li { display:flex; justify-content:space-between; }
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+<!-- RENDAS -->
+<div class="card">
+<h3>💰 Rendas</h3>
+
+<input type="text" id="nomeRenda" placeholder="Ex: Salário, iFood">
+<input type="number" id="valorRenda" placeholder="Valor">
+<button onclick="addRenda()">Adicionar Renda</button>
+
+<h4>Total Entrada: R$ <span id="totalRenda">0</span></h4>
+<ul id="listaRenda"></ul>
+</div>
+
+<!-- GASTOS -->
+<div class="card">
+<h3>🛍️ Novo Gasto</h3>
+<input type="text" id="nome" placeholder="Nome">
+<input type="number" id="valor" placeholder="Valor">
+<select id="categoria">
+<option value="Essencial">Essencial</option>
+<option value="Estilo">Estilo de Vida</option>
+<option value="Investimento">Reserva</option>
+</select>
+<button onclick="addGasto()">Adicionar</button>
+</div>
+
+<!-- RESUMO -->
+<div class="grid">
+<div class="card"><h4>Gastos</h4><span id="total">R$0</span></div>
+<div class="card"><h4>Saldo</h4><span id="saldo">R$0</span></div>
+<div class="card"><h4>Reserva</h4><span id="reserva">R$0</span></div>
+</div>
+
+<!-- META -->
+<div class="card">
+<h3>🎯 Meta (R$1000)</h3>
+<div class="progress"><div class="progress-bar" id="barra"></div></div>
+<p id="progresso">0%</p>
+<p id="alerta"></p>
+</div>
+
+<!-- ANALISE -->
+<div class="card">
+<h3>🧠 Análise Inteligente</h3>
+<p id="analise"></p>
+</div>
+
+<!-- GRAFICO -->
+<div class="card">
+<canvas id="grafico"></canvas>
+</div>
+
+<!-- LISTA -->
+<div class="card">
+<ul id="lista"></ul>
+</div>
+
+</div>
+
+<script>
+
+// DADOS
+let gastos = JSON.parse(localStorage.getItem("gastos")) || [];
+let rendas = JSON.parse(localStorage.getItem("rendas")) || [];
+let chart;
+
+// RENDAS
+function addRenda(){
+    let nome = document.getElementById("nomeRenda").value;
+    let valor = parseFloat(document.getElementById("valorRenda").value);
+
+    if(!nome || !valor) return alert("Preencha");
+
+    rendas.push({nome, valor});
+    localStorage.setItem("rendas", JSON.stringify(rendas));
+
+    document.getElementById("nomeRenda").value="";
+    document.getElementById("valorRenda").value="";
+
+    atualizar();
+}
+
+function removerRenda(i){
+    rendas.splice(i,1);
+    localStorage.setItem("rendas", JSON.stringify(rendas));
+    atualizar();
+}
+
+// GASTOS
+function addGasto(){
+    let nome = document.getElementById("nome").value;
+    let valor = parseFloat(document.getElementById("valor").value);
+    let categoria = document.getElementById("categoria").value;
+
+    if(!nome || !valor) return alert("Preencha");
+
+    gastos.push({nome, valor, categoria});
+
+    document.getElementById("nome").value="";
+    document.getElementById("valor").value="";
+
+    atualizar();
+}
+
+function remover(i){
+    gastos.splice(i,1);
+    atualizar();
+}
+
+// ATUALIZAR
+function atualizar(){
+    let totalGastos = 0, reserva = 0;
+    let categorias = {Essencial:0, Estilo:0, Investimento:0};
+    let lista = document.getElementById("lista");
+    lista.innerHTML="";
+
+    // SOMA RENDAS
+    let salario = 0;
+    let listaRenda = document.getElementById("listaRenda");
+    listaRenda.innerHTML="";
+
+    rendas.forEach((r,i)=>{
+        salario += r.valor;
+
+        let item=document.createElement("li");
+        item.innerHTML=`${r.nome} - R$${r.valor}
+        <button onclick="removerRenda(${i})">X</button>`;
+        listaRenda.appendChild(item);
+    });
+
+    document.getElementById("totalRenda").innerText = salario.toFixed(2);
+
+    // GASTOS
+    gastos.forEach((g,i)=>{
+        if(g.categoria==="Investimento"){reserva+=g.valor;}
+        else{totalGastos+=g.valor;}
+
+        categorias[g.categoria]+=g.valor;
+
+        let item=document.createElement("li");
+        item.innerHTML=`${g.nome} - R$${g.valor}
+        <button onclick="remover(${i})">X</button>`;
+        lista.appendChild(item);
+    });
+
+    let saldo = salario - totalGastos;
+
+    document.getElementById("total").innerText="R$"+totalGastos.toFixed(2);
+    document.getElementById("saldo").innerText="R$"+saldo.toFixed(2);
+    document.getElementById("reserva").innerText="R$"+reserva.toFixed(2);
+
+    // META
+    let meta=1000;
+    let perc=Math.min((reserva/meta)*100,100);
+    document.getElementById("barra").style.width=perc+"%";
+    document.getElementById("progresso").innerText=perc.toFixed(0)+"%";
+
+    // ANALISE
+    gerarAnalise(totalGastos,reserva,salario,categorias);
+
+    // GRAFICO
+    renderGrafico(categorias);
+
+    localStorage.setItem("gastos", JSON.stringify(gastos));
+}
+
+// ANALISE
+function gerarAnalise(total,reserva,salario,c){
+    let txt="";
+
+    let p1=(c.Essencial/salario)*100||0;
+    let p2=(c.Estilo/salario)*100||0;
+    let p3=(reserva/salario)*100||0;
+
+    txt+= p1>60 ? "⚠️ Essenciais altos<br>" : "✅ Essenciais ok<br>";
+    txt+= p2>30 ? "⚠️ Muito lazer<br>" : "👍 Lazer ok<br>";
+    txt+= p3<20 ? "💡 Pouca reserva<br>" : "🚀 Boa reserva<br>";
+
+    let saldo=salario-total;
+    txt+= saldo<0 ? "🚨 Negativo" : "✅ Controlado";
+
+    document.getElementById("analise").innerHTML=txt;
+}
+
+// GRAFICO
+function renderGrafico(cat){
+    if(chart) chart.destroy();
+    chart=new Chart(document.getElementById("grafico"),{
+        type:"pie",
+        data:{
+            labels:Object.keys(cat),
+            datasets:[{data:Object.values(cat)}]
+        }
+    });
+}
+
+atualizar();
+
+</script>
+
+</body>
+</html>
