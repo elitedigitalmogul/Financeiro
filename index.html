@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Finance PRO | Enterprise v8.4.5 PROD ✅</title>
+    <title>Finance PRO | Enterprise v8.4.6 PROD ✅</title>
     <!-- PWA -->
     <link rel="manifest" href="data:application/manifest+json,{
-        'name': 'Finance PRO v8.4.5',
+        'name': 'Finance PRO v8.4.6',
         'short_name': 'FinancePRO',
         'start_url': '.',
         'display': 'standalone',
@@ -32,6 +32,7 @@
         h3, h4 { margin-bottom: 15px; font-weight: 700; }
         
         .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        .grid-nubank { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
         input, button, textarea, select { padding: 12px 16px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 14px; }
         input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
         
@@ -56,14 +57,16 @@
         .feedback-label { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
         
         .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
-        @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } .chart-container { height: 280px; } }
+        @media (max-width: 768px) { 
+            .charts-grid { grid-template-columns: 1fr; } 
+            .chart-container { height: 280px; }
+            .grid-inputs, .grid-nubank { grid-template-columns: 1fr !important; }
+        }
         
         .nubank-section { background: linear-gradient(135deg, var(--nu), #a855f7); border: 2px solid var(--nu); }
-        .nubank-textarea { min-height: 250px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.4; }
-        .nubank-preview { background: rgba(138,5,190,0.15); border-radius: 12px; padding: 16px; margin-top: 12px; max-height: 300px; overflow: auto; display: none; }
-        .preview-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; }
-        .preview-left { flex: 1; } .preview-right { text-align: right; }
-        .preview-cat { font-weight: 600; font-size: 0.9rem; }
+        .nubank-textarea { min-height: 120px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.4; grid-column: 1 / -1; }
+        .nubank-preview { background: rgba(138,5,190,0.15); border-radius: 12px; padding: 16px; margin-top: 12px; max-height: 200px; overflow: auto; display: none; }
+        .preview-item { display: flex; justify-content: space-between; align-items: center; padding: 8px; margin-bottom: 4px; background: rgba(255,255,255,0.05); border-radius: 6px; font-size: 0.85rem; }
         
         .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
         .list-item:hover { background: rgba(255,255,255,0.06); }
@@ -83,8 +86,8 @@
             background: var(--card); padding: 24px; border-radius: 16px; 
             max-width: 400px; width: 90%; max-height: 80vh; overflow: auto;
         }
-        .edit-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
-        .edit-buttons button { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; }
+        .edit-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+        .edit-buttons button { flex: 1; min-width: 120px; padding: 12px; border-radius: 12px; font-weight: 600; }
         
         .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
         .rule-card { background: rgba(5,150,105,0.15); border: 1px solid var(--save); border-radius: 12px; padding: 20px; text-align: center; }
@@ -97,25 +100,82 @@
         .rule-want .rule-bar { background: var(--want); }
         
         .chart-legend { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; }
-        .legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
+        .legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition:         background: 0.2s; }
         .legend-item:hover { background: rgba(255,255,255,0.1); }
         .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+
+/* CONTAINER DO SELECT */
+.month-selector-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    background: #0f172a;
+    padding: 2px 6px;
+    border-radius: 10px;
+    border: 1px solid #334155;
+    transition: border-color 0.2s;
+}
+
+/* MUDANÇA DE COR: Borda fica azul ao passar o mouse */
+.month-selector-wrapper:hover {
+    border-color: #3b82f6; 
+}
+
+select#monthSelect {
+    background: transparent;
+    border: none;
+    color: #f8fafc;
+    font-weight: 600;
+    font-size: 0.85rem;
+    padding: 4px;
+    cursor: pointer;
+    outline: none;
+    width: 110px;
+}
+
+.month-nav-btn {
+    background: transparent;
+    border: none;
+    color: #94a3b8;
+    cursor: pointer;
+    padding: 4px;
+    font-size: 0.85rem;
+    border-radius: 6px;
+    transition: 0.2s;
+}
+
+/* MUDANÇA DE COR: Botões ficam azuis ao passar o mouse */
+.month-nav-btn:hover {
+    color: #3b82f6;
+    background: rgba(59, 130, 246, 0.1);
+}
     </style>
 </head>
 <body>
     <div class="container">
-        <div class="card">
-            <div class="status-bar">
-                <div style="display:flex;align-items:center;gap:15px;">
-                    <h3><span id="statusSmall">v8.4.5 PROD ✅</span></h3>
-                </div>
-                <div>
-                    <strong>Score: <span id="scoreText">0</span>%</strong>
-                    <span id="statusText" style="margin-left:10px;padding:4px 12px;border-radius:8px;font-size:.8rem;">-</span>
-                </div>
-            </div>
-        </div>
+    <div class="card">
+        <div class="status-bar">
+            
+            <!-- APAGUE APENAS O QUE ESTAVA AQUI DENTRO E COLE ISTO: -->
+            <div style="display:flex;align-items:center;gap:15px;">
+                <h3><span id="statusSmall">v8.4.6 PROD </span></h3>
+                
+                <div class="month-selector-wrapper">
+                    <button class="month-nav-btn" onclick="Finance.prevMonth()">◀</button>
+                    <select id="monthSelect" onchange="Finance.changeMonth(this.value)"></select>
+                    <button class="month-nav-btn" onclick="Finance.nextMonth()">▶</button>
+                        </div>
+    </div>
+    <!-- FIM DO BLOCO NOVO -->
 
+    <div>
+        <strong>Score: <span id="scoreText">0</span>%</strong>
+        <span id="statusText" style="margin-left:10px;padding:4px 12px;border-radius:8px;font-size:.8rem;">-</span>
+        
+        <!-- COLE O BOTÃO EXATAMENTE AQUI -->
+        <button class="btn-del" onclick="Finance.limparMesAtual()" style="margin-left: 15px; font-size: 1rem;" title="Limpar este mês">🗑️</button>
+    </div>
+    </div>
         <div class="kpi-grid">
             <div class="card kpi-card"><h4>💰 Entradas</h4><span id="e" class="kpi-value txt-primary">R$ 0,00</span></div>
             <div class="card kpi-card"><h4>💸 Saídas</h4><span id="s" class="kpi-value txt-danger">R$ 0,00</span></div>
@@ -132,15 +192,27 @@
             <div class="feedback-grid" id="feedbackGrid"></div>
         </div>
 
-        <!-- 🔥 IMPORTAÇÃO NUBANK DIRETA -->
-        <div class="card nubank-section">
-            <h3>🧠 Importar Extrato Nubank</h3>
-            <p class="txt-dim">Cole o texto completo (Data	Valor	ID	Descrição):</p>
-            <textarea id="textoDigitavel" class="nubank-textarea" 
-                placeholder="Data	Valor	Identificador	Descrição..."></textarea>
-            <button onclick="Finance.importarTexto()" class="btn-nubank" style="width:100%; margin-top:12px; font-size:16px;">
-                🚀 PROCESSAR EXTRATO
-            </button>
+        <!-- 🔥 IMPORTAÇÃO NUBANK - MESMO ESTILO DO MANUAL -->
+       <div class="card">
+    <h3>Importar Extrato</h3>
+    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+        <textarea id="textoDigitavel" 
+            style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #f8fafc; font-family: monospace; resize: vertical;"
+            rows="5"
+            placeholder="Cole aqui o extrato completo:
+Data	Valor	ID	Descrição
+01/03/2026	-30.2	69a49dc7...	Compra no débito - CARREFOUR SPG 48
+01/03/2026	400	69a4e70f...	Transferência recebida pelo Pix - IFOOD..."></textarea>
+        
+        <button onclick="Finance.importarTexto()" 
+            style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-weight: bold; cursor: pointer; transition: background 0.2s;"
+            onmouseover="this.style.background='#334155'"
+            onmouseout="this.style.background='#1e293b'">
+            🚀 IMPORTAR
+        </button>
+    </div>
+</div>
+
             <div id="nubankPreview" class="nubank-preview"></div>
         </div>
 
@@ -206,12 +278,11 @@
             }
         };
 
-        // 🔥 PARSER NUBANK ULTRA-PRECISE v8.4.5
+        // 🔥 PARSER NUBANK ULTRA-PRECISE v8.4.6
         class NubankParser {
             static classify(descricao) {
                 const text = descricao.toLowerCase();
                 
-                // 💰 RENDA - PRIORIDADE MÁXIMA
                 const rendaKeywords = [
                     'pix recebido', 'transferência recebida', 'ted recebida', 'depósito',
                     'salário', 'comissão', 'freelance', 'freelancer', 'reembolso',
@@ -223,7 +294,6 @@
                     if (text.includes(keyword)) return 'Renda';
                 }
                 
-                // 🏠 ESSENCIAL
                 const essencialKeywords = [
                     'carrefour', 'assai', 'atacadão', 'extra', 'pão de açúcar', 'mercado', 'supermercado',
                     'energia', 'luz', 'água', 'gás', 'internet', 'vivo', 'claro', 'tim',
@@ -234,7 +304,6 @@
                     if (text.includes(keyword)) return 'Essencial';
                 }
                 
-                // 🍔 ESTILO
                 const estiloKeywords = [
                     'ifood', 'uber eats', 'restaurante', 'lanchonete', 'hamburgueria', 'pizzaria', 'bar',
                     'netflix', 'spotify', 'amazon prime', 'disney+', 'hbo max', 'youtube premium',
@@ -260,7 +329,7 @@
                     Renda: '#10b981', Essencial: '#3b82f6', Estilo: '#f59e0b', 
                     Outros: '#64748b', Investimento: '#8b5cf6' 
                 };
-                this.schemaVersion = '8.4.5';
+                this.schemaVersion = '8.4.6';
                 this.editingId = null;
             }
 
@@ -272,6 +341,63 @@
                     this.db = {};
                 }
             }
+getListaMeses() {
+    // Pega os meses que já têm dados
+    const mesesComDados = Object.keys(this.db).filter(k => this.db[k] && this.db[k].length > 0);
+    
+    const listaCompleta = [];
+    const anos = [2026, 2027, 2028, 2029, 2030];
+    
+    // Gera todos os 12 meses para cada um dos anos
+    anos.forEach(ano => {
+        for (let mes = 1; mes <= 12; mes++) {
+            listaCompleta.push(`${ano}-${String(mes).padStart(2, '0')}`);
+        }
+    });
+    
+    // Junta com os meses que já têm dados antigos (se houver), remove duplicados e ordena
+    const listaFinal = [...new Set([...mesesComDados, ...listaCompleta])];
+    return listaFinal.sort().reverse();
+}
+
+updateMonthsList() {
+    const select = document.getElementById('monthSelect');
+    if (!select) return;
+
+    // Pega TODOS os meses gerados na função acima
+    const mesesVisiveis = this.getListaMeses();
+    const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+    
+    select.innerHTML = mesesVisiveis.map(m => {
+        const temDados = this.db[m] && this.db[m].length > 0;
+        const [ano, mes] = m.split('-');
+        const nomeFormatado = `${mesesNomes[parseInt(mes)-1]} / ${ano}`;
+
+        return `<option value="${m}" ${m === this.currentMonth ? 'selected' : ''}>
+            ${nomeFormatado} ${temDados ? '📊' : '⚪'}
+        </option>`;
+    }).join('');
+}
+changeMonth(mesKey) {
+    if (!mesKey) return;
+    this.currentMonth = mesKey;
+    this.update();
+}
+prevMonth() {
+    const lista = this.getListaMeses();
+    const index = lista.indexOf(this.currentMonth);
+    if (index < lista.length - 1) {
+        this.changeMonth(lista[index + 1]);
+    }
+}
+
+nextMonth() {
+    const lista = this.getListaMeses();
+    const index = lista.indexOf(this.currentMonth);
+    if (index > 0) {
+        this.changeMonth(lista[index - 1]);
+    }
+}
 
             save() {
                 localStorage.setItem(`finpro_v${this.schemaVersion}`, JSON.stringify(this.db));
@@ -321,23 +447,19 @@
                 Utils.$('textoDigitavel').value = '';
                 
                 Utils.$('nubankPreview').innerHTML = `
-                    <div style="font-weight:700;margin-bottom:12px;">📊 Resumo:</div>
-                    ${preview.slice(0,5).map(i => 
+                    <div style="font-weight:700;margin-bottom:8px;font-size:0.9rem;">📊 Resumo da importação:</div>
+                    ${preview.slice(0,8).map(i => 
                         `<div class="preview-item">
-                            <div class="preview-left">${i.nome}</div>
-                            <div class="preview-right">
-                                <div class="preview-cat" style="color:${this.catColors[i.cat]}">${i.cat}</div>
-                                ${Utils.format(i.valor)} • ${i.data}
+                            <div style="flex:1;">${i.nome}</div>
+                            <div style="text-align:right;">
+                                <div style="color:${this.catColors[i.cat]};font-weight:600;font-size:0.8rem;">${i.cat}</div>
+                                ${Utils.format(i.valor)}
                             </div>
                         </div>`
-                    ).join('') + (preview.length > 5 ? `<div style="text-align:center;padding:20px;color:var(--dim)">+${preview.length-5} itens...</div>` : '')}
-                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.85rem;">
-                        💰 Renda: ${stats.Renda} | 🏠 Essencial: ${stats.Essencial} | 🍔 Estilo: ${stats.Estilo} | ⚪ Outros: ${stats.Outros}
-                    </div>
+                    ).join('') + (preview.length > 8 ? `<div style="text-align:center;padding:12px;color:var(--dim);font-size:0.8rem;">+${preview.length-8} itens...</div>` : '')}
                 `;
                 Utils.$('nubankPreview').style.display = 'block';
-                
-                alert(`✅ ${adicionados} importados!\n💰 Renda: ${stats.Renda} | 🏠 Essencial: ${stats.Essencial} | 🍔 Estilo: ${stats.Estilo} | ⚪ Outros: ${stats.Outros}`);
+                setTimeout(() => Utils.$('nubankPreview').style.display = 'none', 5000);
             }
 
             add() {
@@ -362,8 +484,22 @@
                     this.update();
                 }
             }
+        limparMesAtual() {
+            const mes = this.currentMonth;
+            const [ano, mesNum] = mes.split('-');
+            const mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+            const nomeMes = mesesNomes[parseInt(mesNum) - 1];
 
-            // 🔥 NOVO: Filtrar por categoria do gráfico
+            const confirmacao = confirm(`⚠️ ATENÇÃO!\n\nVocê tem certeza que deseja APAGAR TODOS os dados de ${nomeMes} de ${ano}?\nEsta ação não pode ser desfeita.`);
+            
+            if (confirmacao) {
+                this.db[mes] = [];
+                localStorage.setItem(`finpro_v${this.schemaVersion}_${mes}`, JSON.stringify([]));
+                this.update();
+                alert(`Dados de ${nomeMes} apagados com sucesso!`);
+            }
+        }
+
             filterByCategory(cat) {
                 if (cat === this.currentFilter) {
                     this.currentFilter = 'Todos';
@@ -373,7 +509,6 @@
                 this.update();
             }
 
-            // 🔥 NOVO: Editor para Outros
             editItem(id) {
                 const m = this.currentMonth;
                 const item = this.db[m]?.find(i => i.id === id);
@@ -392,7 +527,6 @@
                     this.save();
                     this.closeEdit();
                     this.update();
-                    alert(`✅ Reclassificado para ${newCat}!`);
                 }
             }
 
@@ -427,6 +561,7 @@
                 this.renderFeedback(allData);
                 this.renderList(data);
                 this.renderCharts(allData);
+this.updateMonthsList();
             }
 
             renderRule(data, entrada) {
@@ -490,7 +625,6 @@
                 const labels = Object.keys(cats), values = Object.values(cats);
                 const colors = labels.map(c => this.catColors[c] || '#64748b');
                 
-                // Legenda clicável
                 let legendHTML = '';
                 labels.forEach((label, index) => {
                     legendHTML += `
@@ -520,7 +654,6 @@
                         }
                     });
                     
-                    // Cursor pointer no container
                     Utils.$('donutContainer').style.cursor = 'pointer';
                 }
             }
@@ -528,14 +661,13 @@
             init() {
                 this.loadDB();
                 this.update();
-                console.log('✅ Finance PRO v8.4.5 - GRÁFICO INTERATIVO + EDITOR OUTROS');
+                console.log('✅ Finance PRO v8.4.6 - NUBANK COMPACT + INTERATIVO');
             }
         }
 
         const Finance = new FinanceEngine();
         window.addEventListener('load', () => Finance.init());
         
-        // Fechar modal clicando fora
         Utils.$('editModal').addEventListener('click', (e) => {
             if (e.target === Utils.$('editModal')) Finance.closeEdit();
         });
