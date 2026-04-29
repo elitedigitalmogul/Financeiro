@@ -1,414 +1,544 @@
 <!DOCTYPE html>
 <html lang="pt-br">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Finance PRO | Dashboard</title>
-
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
-<style>
-:root{
-    --bg:#0f172a;
-    --card:#1e293b;
-    --primary:#10b981;
-    --danger:#ef4444;
-    --text:#f8fafc;
-    --dim:#94a3b8;
-}
-
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-}
-
-body{
-    background:var(--bg);
-    color:var(--text);
-    font-family:sans-serif;
-    padding:20px;
-}
-
-.container{
-    max-width:1000px;
-    margin:auto;
-}
-
-.card{
-    background:var(--card);
-    padding:20px;
-    border-radius:16px;
-    margin-bottom:20px;
-}
-
-.grid-form{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(150px,1fr));
-    gap:10px;
-}
-
-input,select,button,textarea{
-    padding:12px;
-    border-radius:10px;
-    border:1px solid #334155;
-    background:#0f172a;
-    color:#fff;
-}
-
-button{
-    background:var(--primary);
-    border:none;
-    cursor:pointer;
-}
-
-.item{
-    display:flex;
-    justify-content:space-between;
-    padding:10px;
-    border-bottom:1px solid #334155;
-}
-
-.btn-del{
-    background:none;
-    border:none;
-    color:var(--danger);
-    cursor:pointer;
-}
-
-.kpi-group{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(180px,1fr));
-    gap:15px;
-}
-
-canvas{
-    width:100%;
-}
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Finance PRO | Enterprise v8.4.5 PROD ✅</title>
+    <!-- PWA -->
+    <link rel="manifest" href="data:application/manifest+json,{
+        'name': 'Finance PRO v8.4.5',
+        'short_name': 'FinancePRO',
+        'start_url': '.',
+        'display': 'standalone',
+        'background_color': '#0f172a',
+        'theme_color': '#10b981',
+        'icons': [{'src': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMTBiOTgxIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSI+JHxyPC90ZXh0Pgo8L3N2Zz4=', 'sizes': '192x192', 'type': 'image/svg+xml'}]
+    }">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+    <style>
+        :root {
+            --bg: #0f172a; --card: #1e293b; --primary: #10b981; --danger: #ef4444;
+            --warning: #f59e0b; --text: #f8fafc; --dim: #94a3b8; --nu: #8a05be; --accent: #3b82f6;
+            --save: #059669; --essential: #3b82f6; --want: #f59e0b; --outros: #64748b;
+        }
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { background: var(--bg); color: var(--text); font-family: 'Inter', sans-serif; padding: 20px; line-height: 1.6; min-height: 100vh; }
+        .container { max-width: 1400px; margin: auto; animation: fadeIn 0.5s; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+        
+        .card { background: var(--card); padding: 24px; border-radius: 20px; margin-bottom: 20px; border: 1px solid #334155; box-shadow: 0 10px 25px rgba(0,0,0,0.3); transition: all 0.3s; }
+        .card:hover { border-color: #475569; transform: translateY(-2px); }
+        h3, h4 { margin-bottom: 15px; font-weight: 700; }
+        
+        .grid-inputs { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 12px; }
+        input, button, textarea, select { padding: 12px 16px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #fff; font-size: 14px; }
+        input:focus, textarea:focus, select:focus { border-color: var(--accent); outline: none; box-shadow: 0 0 0 3px rgba(59,130,246,0.2); }
+        
+        button { background: var(--primary); border: none; cursor: pointer; font-weight: 700; color: #0f172a; transition: all 0.2s; }
+        button:hover:not(:disabled) { filter: brightness(1.1); transform: scale(1.02); }
+        button:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-save { background: var(--save) !important; color: white !important; }
+        .btn-danger { background: var(--danger) !important; color: white !important; }
+        .btn-nubank { background: var(--nu) !important; color: white !important; }
+        .btn-edit { background: var(--accent) !important; font-size: 12px; padding: 6px 12px; }
+        
+        .txt-primary { color: var(--primary); } .txt-danger { color: var(--danger); } .txt-dim { color: var(--dim); font-size: 0.85rem; }
+        .kpi-card { text-align: center; padding: 20px; }
+        .kpi-value { font-size: 1.6rem; font-weight: 900; display: block; margin-top: 5px; }
+        .chart-container { position: relative; height: 320px; width: 100%; cursor: pointer; }
+        .kpi-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px; }
+        .status-bar { display: flex; justify-content: space-between; align-items: center; padding: 15px; background: rgba(16,185,129,0.1); border-radius: 12px; border: 1px solid rgba(16,185,129,0.3); }
+        
+        .feedback-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-top: 20px; }
+        .feedback-item { background: rgba(255,255,255,0.05); padding: 15px; border-radius: 12px; text-align: center; border-left: 4px solid var(--primary); }
+        .feedback-number { font-size: 1.4rem; font-weight: 900; display: block; }
+        .feedback-label { font-size: 0.8rem; opacity: 0.7; margin-top: 4px; }
+        
+        .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 24px; }
+        @media (max-width: 768px) { .charts-grid { grid-template-columns: 1fr; } .chart-container { height: 280px; } }
+        
+        .nubank-section { background: linear-gradient(135deg, var(--nu), #a855f7); border: 2px solid var(--nu); }
+        .nubank-textarea { min-height: 250px; font-family: 'Courier New', monospace; font-size: 13px; line-height: 1.4; }
+        .nubank-preview { background: rgba(138,5,190,0.15); border-radius: 12px; padding: 16px; margin-top: 12px; max-height: 300px; overflow: auto; display: none; }
+        .preview-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.05); border-radius: 8px; }
+        .preview-left { flex: 1; } .preview-right { text-align: right; }
+        .preview-cat { font-weight: 600; font-size: 0.9rem; }
+        
+        .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px; margin-bottom: 8px; background: rgba(255,255,255,0.03); border-radius: 8px; cursor: pointer; transition: background 0.2s; }
+        .list-item:hover { background: rgba(255,255,255,0.06); }
+        .list-info { flex: 1; } .list-nome { font-weight: 600; margin-bottom: 2px; } .list-cat { font-size: 0.8rem; opacity: 0.7; }
+        .list-valor { font-weight: 700; font-size: 1.1rem; } 
+        .btn-del { background: none; color: var(--danger); border: none; font-size: 1.3rem; cursor: pointer; opacity: 0.6; padding: 4px; border-radius: 4px; transition: all 0.2s; margin-left: 8px; }
+        .btn-del:hover { opacity: 1; background: rgba(239,68,68,0.2); }
+        .btn-edit-outros { background: var(--outros) !important; color: white !important; font-size: 11px; padding: 4px 8px; margin-left: 4px; }
+        
+        /* Editor inline para Outros */
+        .edit-modal { 
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%; 
+            background: rgba(0,0,0,0.8); display: none; z-index: 1000; 
+            align-items: center; justify-content: center;
+        }
+        .edit-panel { 
+            background: var(--card); padding: 24px; border-radius: 16px; 
+            max-width: 400px; width: 90%; max-height: 80vh; overflow: auto;
+        }
+        .edit-buttons { display: flex; gap: 12px; justify-content: center; margin-top: 20px; }
+        .edit-buttons button { flex: 1; padding: 12px; border-radius: 12px; font-weight: 600; }
+        
+        .rule-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; margin: 20px 0; }
+        .rule-card { background: rgba(5,150,105,0.15); border: 1px solid var(--save); border-radius: 12px; padding: 20px; text-align: center; }
+        .rule-title { font-weight: 700; margin-bottom: 8px; font-size: 0.9rem; opacity: 0.9; }
+        .rule-value { font-size: 1.5rem; font-weight: 900; }
+        .rule-progress { height: 8px; background: rgba(255,255,255,0.1); border-radius: 4px; margin-top: 12px; overflow: hidden; }
+        .rule-bar { height: 100%; transition: width 0.5s ease; border-radius: 4px; }
+        .rule-save .rule-bar { background: var(--save); }
+        .rule-essential .rule-bar { background: var(--essential); }
+        .rule-want .rule-bar { background: var(--want); }
+        
+        .chart-legend { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; }
+        .legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
+        .legend-item:hover { background: rgba(255,255,255,0.1); }
+        .legend-color { width: 12px; height: 12px; border-radius: 2px; }
+    </style>
 </head>
-
 <body>
-
-<div class="container">
-
-<!-- INPUT -->
-<div class="card">
-<div class="grid-form">
-<input type="month" id="mes">
-<input id="nome" placeholder="Descrição">
-<input id="valor" type="number" placeholder="Valor">
-<select id="cat">
-<option value="Renda">Renda</option>
-<option value="Essencial">Essencial</option>
-<option value="Estilo">Estilo</option>
-<option value="Investimento">Investimento</option>
-</select>
-<button onclick="add()">Adicionar</button>
-</div>
-</div>
-
-<!-- IMPORTADOR EXTRATO -->
-<div class="card">
-<h3>Importar Extrato</h3>
-<textarea id="extrato" placeholder="Cole aqui seu extrato"></textarea>
-<button onclick="importarExtrato()">Importar</button>
-</div>
-
-<!-- KPIs -->
-<div class="kpi-group">
-<div class="card">Entradas<br><span id="e">0</span></div>
-<div class="card">Saídas<br><span id="s">0</span></div>
-<div class="card">Saldo<br><span id="saldo">0</span></div>
-</div>
-
-<!-- SCORE -->
-<div class="card">
-Score: <span id="score">0</span>
-<div id="status"></div>
-</div>
-
-<!-- CHART -->
-<div class="card">
-<canvas id="chart1"></canvas>
-</div>
-
-<!-- INSIGHTS + LISTA -->
-<div class="card">
-    <div id="insights"></div>
-    <div id="metaTxt"></div>
-    <hr style="margin:15px 0;">
-    <div id="lista"></div>
-</div>
-
-</div>
-
-<script>
-
-let db = JSON.parse(localStorage.getItem("finpro")) || {};
-let chart;
-
-const $ = id => document.getElementById(id);
-
-/* =========================
-   INICIALIZAÇÃO SEGURA DO MÊS
-========================= */
-window.addEventListener("DOMContentLoaded", () => {
-    const el = $("mes");
-
-    if (el) {
-        el.value = new Date().toISOString().slice(0,7);
-    }
-});
-
-/* =========================
-   MÊS (CORRIGIDO E BLINDADO)
-========================= */
-function mes(){
-
-    const el = $("mes");
-
-    if (!el) {
-        return new Date().toISOString().slice(0,7);
-    }
-
-    let m = el.value;
-
-    if (!m || m.trim() === "") {
-        m = new Date().toISOString().slice(0,7);
-        el.value = m;
-    }
-
-    return m;
-}
-
-/* =========================
-   SALVAR
-========================= */
-function save(){
-    localStorage.setItem("finpro", JSON.stringify(db));
-}
-
-/* =========================
-   FORMATADOR
-========================= */
-function f(v){
-    return (v||0).toLocaleString("pt-BR",{
-        style:"currency",
-        currency:"BRL"
-    });
-}
-
-</script>
-
-<script>
-
-/* =========================
-   ADICIONAR
-========================= */
-function add(){
-
-    let m = mes();
-    let n = $("nome").value;
-    let v = parseFloat($("valor").value);
-    let c = $("cat").value;
-
-    if(!n || isNaN(v)) return;
-
-    if(!db[m]) db[m] = [];
-
-    db[m].push({
-        id: Date.now(),
-        nome: n,
-        valor: v,
-        cat: c
-    });
-
-    save();
-
-    $("nome").value = "";
-    $("valor").value = "";
-
-    update();
-}
-
-/* =========================
-   REMOVER
-========================= */
-function del(id){
-
-    let m = mes();
-
-    if(!db[m]) return;
-
-    db[m] = db[m].filter(x => x.id !== id);
-
-    save();
-
-    update();
-}
-
-</script>
-
-/* =========================
-   IMPORTADOR DE EXTRATO
-========================= */
-
-function importarExtrato(){
-
-    let texto = $("extrato").value;
-    if(!texto) return;
-
-    let m = mes();
-
-    if(!db[m]) db[m] = [];
-
-    let linhas = texto.split("\n");
-
-    linhas.forEach(l => {
-
-        l = l.trim();
-        if(!l) return;
-
-        let match = l.match(/-?\d+[.,]?\d*/);
-
-        if(!match) return;
-
-        let valor = parseFloat(match[0].replace(",", "."));
-
-        let nome = l.replace(match[0], "").trim();
-
-        let cat = valor >= 0 ? "Renda" : "Essencial";
-
-        db[m].push({
-            id: Date.now() + Math.random(),
-            nome: nome || "Importado",
-            valor: Math.abs(valor),
-            cat: cat
-        });
-    });
-
-    save();
-
-    $("extrato").value = "";
-
-    update();
-}
-
-</script>
-<script>
-
-function update(){
-
-    let m = mes();
-    let arr = db[m] || [];
-
-    let e = 0;
-    let s = 0;
-    let i = 0;
-
-    let cat = {
-        Essencial: 0,
-        Estilo: 0,
-        Investimento: 0
-    };
-
-    let html = "";
-
-    arr.forEach(x => {
-
-        let v = Number(x.valor);
-
-        if(x.cat === "Renda"){
-            e += v;
-        } else {
-            s += v;
-
-            if(cat[x.cat] !== undefined){
-                cat[x.cat] += v;
+    <div class="container">
+        <div class="card">
+            <div class="status-bar">
+                <div style="display:flex;align-items:center;gap:15px;">
+                    <h3><span id="statusSmall">v8.4.5 PROD ✅</span></h3>
+                </div>
+                <div>
+                    <strong>Score: <span id="scoreText">0</span>%</strong>
+                    <span id="statusText" style="margin-left:10px;padding:4px 12px;border-radius:8px;font-size:.8rem;">-</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="kpi-grid">
+            <div class="card kpi-card"><h4>💰 Entradas</h4><span id="e" class="kpi-value txt-primary">R$ 0,00</span></div>
+            <div class="card kpi-card"><h4>💸 Saídas</h4><span id="s" class="kpi-value txt-danger">R$ 0,00</span></div>
+            <div class="card kpi-card"><h4>📊 Saldo</h4><span id="saldo" class="kpi-value">R$ 0,00</span></div>
+        </div>
+
+        <div class="card">
+            <h4>🎯 REGRA 50-30-20</h4>
+            <div class="rule-grid" id="ruleGrid"></div>
+        </div>
+
+        <div class="card">
+            <h4>📈 DASHBOARD</h4>
+            <div class="feedback-grid" id="feedbackGrid"></div>
+        </div>
+
+        <!-- 🔥 IMPORTAÇÃO NUBANK DIRETA -->
+        <div class="card nubank-section">
+            <h3>🧠 Importar Extrato Nubank</h3>
+            <p class="txt-dim">Cole o texto completo (Data	Valor	ID	Descrição):</p>
+            <textarea id="textoDigitavel" class="nubank-textarea" 
+                placeholder="Data	Valor	Identificador	Descrição..."></textarea>
+            <button onclick="Finance.importarTexto()" class="btn-nubank" style="width:100%; margin-top:12px; font-size:16px;">
+                🚀 PROCESSAR EXTRATO
+            </button>
+            <div id="nubankPreview" class="nubank-preview"></div>
+        </div>
+
+        <div class="card">
+            <h3>➕ Novo Lançamento Manual</h3>
+            <div class="grid-inputs">
+                <input id="nome" placeholder="Ex: Mercado Extra">
+                <input id="valor" type="number" step="0.01" placeholder="1250.00">
+                <select id="cat">
+                    <option value="Renda">Renda 💰</option>
+                    <option value="Essencial">Essencial 🏠 (50%)</option>
+                    <option value="Estilo">Estilo 🍔 (30%)</option>
+                    <option value="Outros">Outros ⚪</option>
+                    <option value="Investimento">Investimento 📈 (20%)</option>
+                </select>
+                <button onclick="Finance.add()">➕ Salvar</button>
+            </div>
+        </div>
+
+        <div class="card">
+            <h3>📋 Lançamentos <span id="filterCount" class="txt-dim">(Todos)</span></h3>
+            <div id="lista" style="max-height:400px;overflow:auto;"></div>
+        </div>
+
+        <div class="card">
+            <div class="charts-grid">
+                <div>
+                    <h4>🍕 Distribuição <span id="chartLegend"></span></h4>
+                    <div class="chart-container" id="donutContainer">
+                        <canvas id="chartDonut"></canvas>
+                    </div>
+                </div>
+                <div><h4>📈 Evolução Mensal</h4><div class="chart-container"><canvas id="chartBar"></canvas></div></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Editor Inline para Outros -->
+    <div id="editModal" class="edit-modal">
+        <div class="edit-panel">
+            <h3>🔄 Reclassificar</h3>
+            <p class="txt-dim" id="editItemInfo"></p>
+            <div style="margin: 20px 0;">
+                <strong>Nova categoria:</strong><br><br>
+                <div class="edit-buttons">
+                    <button onclick="Finance.reclassify('Renda')" style="background: var(--primary) !important;">💰 Renda</button>
+                    <button onclick="Finance.reclassify('Essencial')" style="background: var(--essential) !important;">🏠 Essencial</button>
+                    <button onclick="Finance.reclassify('Estilo')" style="background: var(--want) !important;">🍔 Estilo</button>
+                    <button onclick="Finance.reclassify('Investimento')" style="background: #8b5cf6 !important;">📈 Investimento</button>
+                </div>
+            </div>
+            <button onclick="Finance.closeEdit()" class="btn-danger" style="width:100%;">❌ Cancelar</button>
+        </div>
+    </div>
+
+    <script>
+        const Utils = {
+            $(id) { return document.getElementById(id); },
+            format(v) { return (v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); },
+            parseDateBR(dateStr) {
+                const [d, m, y] = dateStr.split('/');
+                return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
             }
+        };
 
-            if(x.cat === "Investimento"){
-                i += v;
+        // 🔥 PARSER NUBANK ULTRA-PRECISE v8.4.5
+        class NubankParser {
+            static classify(descricao) {
+                const text = descricao.toLowerCase();
+                
+                // 💰 RENDA - PRIORIDADE MÁXIMA
+                const rendaKeywords = [
+                    'pix recebido', 'transferência recebida', 'ted recebida', 'depósito',
+                    'salário', 'comissão', 'freelance', 'freelancer', 'reembolso',
+                    'cashback', 'restituição', 'dividendos', 'juros recebidos',
+                    'pagamento recebido', 'crédito recebido'
+                ];
+                
+                for (let keyword of rendaKeywords) {
+                    if (text.includes(keyword)) return 'Renda';
+                }
+                
+                // 🏠 ESSENCIAL
+                const essencialKeywords = [
+                    'carrefour', 'assai', 'atacadão', 'extra', 'pão de açúcar', 'mercado', 'supermercado',
+                    'energia', 'luz', 'água', 'gás', 'internet', 'vivo', 'claro', 'tim',
+                    'posto', 'gasolina', 'combustível', 'farmácia', 'drogaria', 'consulta', 'hospital'
+                ];
+                
+                for (let keyword of essencialKeywords) {
+                    if (text.includes(keyword)) return 'Essencial';
+                }
+                
+                // 🍔 ESTILO
+                const estiloKeywords = [
+                    'ifood', 'uber eats', 'restaurante', 'lanchonete', 'hamburgueria', 'pizzaria', 'bar',
+                    'netflix', 'spotify', 'amazon prime', 'disney+', 'hbo max', 'youtube premium',
+                    'shopee', 'shein', 'aliexpress', 'amazon', 'zara', 'renner', 'nike',
+                    'steam', 'playstation', 'xbox', 'cinema', 'shows', 'uber', '99'
+                ];
+                
+                for (let keyword of estiloKeywords) {
+                    if (text.includes(keyword)) return 'Estilo';
+                }
+                
+                return 'Outros';
             }
         }
 
-        html += `
-            <div class="item">
-                <div>
-                    ${x.nome}<br>
-                    <small style="color:var(--dim)">${x.cat}</small>
-                </div>
-                <div>
-                    ${f(v)}
-                    <button class="btn-del" onclick="del(${x.id})">×</button>
-                </div>
-            </div>
-        `;
-    });
-
-    // LISTA
-    $("lista").innerHTML = html || "Sem lançamentos neste mês";
-
-    // KPIs
-    $("e").innerText = f(e);
-    $("s").innerText = f(s);
-    $("saldo").innerText = f(e - s);
-
-    // SCORE
-    let score = 0;
-
-    if(e > 0){
-        score = 50;
-
-        if(e > s) score += 20;
-        if(i >= e * 0.2) score += 20;
-        if(s <= e * 0.7) score += 10;
-    }
-
-    score = Math.min(Math.max(score,0),100);
-
-    $("score").innerText = score;
-
-    $("status").innerText =
-        score >= 80 ? "Excelente" :
-        score >= 50 ? "Regular" :
-        "Atenção";
-
-    // META
-    $("metaTxt").innerText =
-        `Meta 20%: ${f(e * 0.2)} | Investido: ${f(i)}`;
-
-    // INSIGHTS
-    $("insights").innerText =
-        e < s && e > 0
-        ? "⚠ Gastos acima da renda"
-        : "✔ Finanças equilibradas";
-
-    // CHART (ESTÁVEL)
-    let dados = [
-        cat.Essencial,
-        cat.Estilo,
-        cat.Investimento
-    ];
-
-    if(window.chart){
-        window.chart.data.datasets[0].data = dados;
-        window.chart.update();
-    } else {
-        window.chart = new Chart($("chart1"), {
-            type: "doughnut",
-            data: {
-                labels: ["Essencial","Estilo","Investimento"],
-                datasets: [{
-                    data: dados
-                }]
+        class FinanceEngine {
+            constructor() {
+                this.db = {}; 
+                this.charts = { donut: null, bar: null };
+                this.currentFilter = 'Todos';
+                this.currentMonth = new Date().toISOString().slice(0,7);
+                this.catColors = { 
+                    Renda: '#10b981', Essencial: '#3b82f6', Estilo: '#f59e0b', 
+                    Outros: '#64748b', Investimento: '#8b5cf6' 
+                };
+                this.schemaVersion = '8.4.5';
+                this.editingId = null;
             }
+
+            loadDB() {
+                try {
+                    const raw = localStorage.getItem(`finpro_v${this.schemaVersion}`);
+                    this.db = raw ? JSON.parse(raw) : {};
+                } catch(e) {
+                    this.db = {};
+                }
+            }
+
+            save() {
+                localStorage.setItem(`finpro_v${this.schemaVersion}`, JSON.stringify(this.db));
+            }
+
+            importarTexto() {
+                const rawData = Utils.$('textoDigitavel').value.trim();
+                if (!rawData) return alert('❌ Cole o extrato primeiro!');
+                
+                const linhas = rawData.split('\n').filter(l => l.trim());
+                let adicionados = 0;
+                let preview = [];
+                let stats = { Renda: 0, Essencial: 0, Estilo: 0, Outros: 0, Investimento: 0 };
+
+                linhas.forEach((linha, index) => {
+                    if (index === 0 && linha.includes('Data')) return;
+                    
+                    const partes = linha.split(/\t| {2,}/).map(p => p.trim());
+                    if (partes.length < 4) return;
+                    
+                    const [dataBr, valorRaw, id, desc] = partes;
+                    const valor = parseFloat(valorRaw.replace(',', '.'));
+                    if (isNaN(valor)) return;
+                    
+                    const dataIso = Utils.parseDateBR(dataBr);
+                    const [ano, mes] = dataIso.split('-').slice(0,2);
+                    const mesKey = `${ano}-${mes}`;
+                    
+                    if (!this.db[mesKey]) this.db[mesKey] = [];
+                    
+                    const jaExiste = this.db[mesKey].some(item => item.id === id);
+                    if (jaExiste) return;
+                    
+                    const cat = NubankParser.classify(desc);
+                    const nome = desc.split(' - ')[1]?.slice(0,45) || desc.slice(0,45);
+                    
+                    this.db[mesKey].push({
+                        id: id, nome, valor: Math.abs(valor), cat, data: dataIso, fonte: 'Nubank'
+                    });
+                    
+                    adicionados++; stats[cat]++; preview.push({ nome, valor: Math.abs(valor), cat, data: dataBr });
+                });
+
+                this.save();
+                this.currentMonth = Object.keys(this.db)[Object.keys(this.db).length - 1] || this.currentMonth;
+                this.update();
+                Utils.$('textoDigitavel').value = '';
+                
+                Utils.$('nubankPreview').innerHTML = `
+                    <div style="font-weight:700;margin-bottom:12px;">📊 Resumo:</div>
+                    ${preview.slice(0,5).map(i => 
+                        `<div class="preview-item">
+                            <div class="preview-left">${i.nome}</div>
+                            <div class="preview-right">
+                                <div class="preview-cat" style="color:${this.catColors[i.cat]}">${i.cat}</div>
+                                ${Utils.format(i.valor)} • ${i.data}
+                            </div>
+                        </div>`
+                    ).join('') + (preview.length > 5 ? `<div style="text-align:center;padding:20px;color:var(--dim)">+${preview.length-5} itens...</div>` : '')}
+                    <div style="margin-top:16px;padding-top:16px;border-top:1px solid rgba(255,255,255,0.1);font-size:0.85rem;">
+                        💰 Renda: ${stats.Renda} | 🏠 Essencial: ${stats.Essencial} | 🍔 Estilo: ${stats.Estilo} | ⚪ Outros: ${stats.Outros}
+                    </div>
+                `;
+                Utils.$('nubankPreview').style.display = 'block';
+                
+                alert(`✅ ${adicionados} importados!\n💰 Renda: ${stats.Renda} | 🏠 Essencial: ${stats.Essencial} | 🍔 Estilo: ${stats.Estilo} | ⚪ Outros: ${stats.Outros}`);
+            }
+
+            add() {
+                const m = this.currentMonth;
+                const n = Utils.$('nome').value.trim();
+                const v = parseFloat(Utils.$('valor').value);
+                const c = Utils.$('cat').value;
+                if (!n || isNaN(v) || v <= 0) return alert("❌ Preencha todos os campos!");
+                
+                if (!this.db[m]) this.db[m] = [];
+                this.db[m].push({ id: Date.now()+Math.random(), nome: n.slice(0,40), valor: v, cat: c, data: new Date().toISOString().slice(0,10) });
+                this.save();
+                Utils.$('nome').value = Utils.$('valor').value = '';
+                this.update();
+            }
+
+            del(id) {
+                const m = this.currentMonth;
+                if (this.db[m]) {
+                    this.db[m] = this.db[m].filter(i => i.id !== id);
+                    this.save();
+                    this.update();
+                }
+            }
+
+            // 🔥 NOVO: Filtrar por categoria do gráfico
+            filterByCategory(cat) {
+                if (cat === this.currentFilter) {
+                    this.currentFilter = 'Todos';
+                } else {
+                    this.currentFilter = cat;
+                }
+                this.update();
+            }
+
+            // 🔥 NOVO: Editor para Outros
+            editItem(id) {
+                const m = this.currentMonth;
+                const item = this.db[m]?.find(i => i.id === id);
+                if (!item || item.cat !== 'Outros') return;
+                
+                this.editingId = id;
+                Utils.$('editItemInfo').textContent = `${item.nome} - ${Utils.format(item.valor)}`;
+                Utils.$('editModal').style.display = 'flex';
+            }
+
+            reclassify(newCat) {
+                const m = this.currentMonth;
+                const item = this.db[m]?.find(i => i.id === this.editingId);
+                if (item) {
+                    item.cat = newCat;
+                    this.save();
+                    this.closeEdit();
+                    this.update();
+                    alert(`✅ Reclassificado para ${newCat}!`);
+                }
+            }
+
+            closeEdit() {
+                this.editingId = null;
+                Utils.$('editModal').style.display = 'none';
+            }
+
+            getFilteredData() {
+                const data = this.db[this.currentMonth] || [];
+                return this.currentFilter === 'Todos' ? data : data.filter(i => i.cat === this.currentFilter);
+            }
+
+            update() {
+                const data = this.getFilteredData();
+                const allData = this.db[this.currentMonth] || [];
+                const entrada = allData.filter(i => i.cat === 'Renda').reduce((a,i) => a + i.valor, 0);
+                const saida = allData.filter(i => i.cat !== 'Renda').reduce((a,i) => a + i.valor, 0);
+                const saldo = entrada - saida;
+                
+                Utils.$('e').textContent = Utils.format(entrada);
+                Utils.$('s').textContent = Utils.format(saida);
+                Utils.$('saldo').textContent = Utils.format(saldo);
+                Utils.$('saldo').parentElement.className = `kpi-card ${saldo >= 0 ? 'txt-primary' : 'txt-danger'}`;
+                
+                const score = entrada + saida === 0 ? 0 : Math.round(Math.min(100, (entrada/(entrada+saida))*100));
+                Utils.$('scoreText').textContent = score;
+                Utils.$('statusText').textContent = `${allData.length} itens`;
+                Utils.$('filterCount').textContent = `(${data.length} ${this.currentFilter})`;
+                
+                this.renderRule(allData, entrada);
+                this.renderFeedback(allData);
+                this.renderList(data);
+                this.renderCharts(allData);
+            }
+
+            renderRule(data, entrada) {
+                const essencial = data.filter(i => i.cat === 'Essencial').reduce((a,i) => a + i.valor, 0);
+                const estilo = data.filter(i => i.cat === 'Estilo').reduce((a,i) => a + i.valor, 0);
+                const investimento = data.filter(i => i.cat === 'Investimento').reduce((a,i) => a + i.valor, 0);
+                
+                if (entrada === 0) return Utils.$('ruleGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;opacity:0.5">Adicione renda para ver a regra 50-30-20</div>';
+                
+                const meta = { essencial: entrada*0.5, estilo: entrada*0.3, poupanca: entrada*0.2 };
+                Utils.$('ruleGrid').innerHTML = `
+                    <div class="rule-card rule-essential">
+                        <div class="rule-title">🏠 Necessidades (50%)</div>
+                        <div class="rule-value">${Utils.format(essencial)} / ${Utils.format(meta.essencial)}</div>
+                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(essencial/meta.essencial)*100)}%"></div></div>
+                    </div>
+                    <div class="rule-card rule-want">
+                        <div class="rule-title">🍔 Desejos (30%)</div>
+                        <div class="rule-value">${Utils.format(estilo)} / ${Utils.format(meta.estilo)}</div>
+                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(estilo/meta.estilo)*100)}%"></div></div>
+                    </div>
+                    <div class="rule-card rule-save">
+                        <div class="rule-title">💰 Poupança (20%)</div>
+                        <div class="rule-value">${Utils.format(investimento)} / ${Utils.format(meta.poupanca)}</div>
+                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(investimento/meta.poupanca)*100)}%"></div></div>
+                    </div>
+                `;
+            }
+
+            renderFeedback(data) {
+                const cats = {};
+                data.forEach(i => cats[i.cat] = (cats[i.cat]||0) + i.valor);
+                Utils.$('feedbackGrid').innerHTML = `
+                    <div class="feedback-item"><span class="feedback-number txt-primary">${data.length}</span><span class="feedback-label">Total</span></div>
+                    <div class="feedback-item"><span class="feedback-number txt-danger">${Utils.format(Math.max(...Object.values(cats)||[0]))}</span><span class="feedback-label">Maior gasto</span></div>
+                    <div class="feedback-item"><span class="feedback-number">${Object.keys(cats).length}</span><span class="feedback-label">Categorias</span></div>
+                `;
+            }
+
+            renderList(data) {
+                Utils.$('lista').innerHTML = data.map(i => `
+                    <div class="list-item">
+                        <div class="list-info">
+                            <div class="list-nome">${i.nome}</div>
+                            <div class="list-cat">${i.cat} • ${i.data} ${i.fonte ? `• ${i.fonte}` : ''}</div>
+                        </div>
+                        <div style="display:flex;align-items:center;">
+                            <div class="list-valor ${i.cat === 'Renda' ? 'txt-primary' : 'txt-danger'}">${Utils.format(i.valor)}</div>
+                            ${i.cat === 'Outros' ? `<button class="btn-edit-outros" onclick="Finance.editItem('${i.id}')">🔄</button>` : ''}
+                            <button class="btn-del" onclick="Finance.del('${i.id}')">×</button>
+                        </div>
+                    </div>
+                `).join('') || '<div style="text-align:center;opacity:0.5;padding:40px">📝 Importe seu extrato ou adicione manualmente</div>';
+            }
+
+            renderCharts(data) {
+                if (this.charts.donut) this.charts.donut.destroy();
+                
+                const cats = {};
+                data.forEach(i => cats[i.cat] = (cats[i.cat]||0) + i.valor);
+                const labels = Object.keys(cats), values = Object.values(cats);
+                const colors = labels.map(c => this.catColors[c] || '#64748b');
+                
+                // Legenda clicável
+                let legendHTML = '';
+                labels.forEach((label, index) => {
+                    legendHTML += `
+                        <div class="legend-item" onclick="Finance.filterByCategory('${label}')">
+                            <div class="legend-color" style="background:${colors[index]}"></div>
+                            <span>${label} (${Utils.format(values[index])})</span>
+                        </div>
+                    `;
+                });
+                Utils.$('chartLegend').innerHTML = legendHTML;
+                
+                if (labels.length) {
+                    const ctx = Utils.$('chartDonut').getContext('2d');
+                    this.charts.donut = new Chart(ctx, {
+                        type: 'doughnut', 
+                        data: { labels, datasets: [{data:values, backgroundColor:colors}] },
+                        options: { 
+                            responsive:true, 
+                            maintainAspectRatio:false, 
+                            plugins:{legend:{display:false}},
+                            onClick: (event, elements) => {
+                                if (elements.length > 0) {
+                                    const index = elements[0].index;
+                                    this.filterByCategory(labels[index]);
+                                }
+                            }
+                        }
+                    });
+                    
+                    // Cursor pointer no container
+                    Utils.$('donutContainer').style.cursor = 'pointer';
+                }
+            }
+
+            init() {
+                this.loadDB();
+                this.update();
+                console.log('✅ Finance PRO v8.4.5 - GRÁFICO INTERATIVO + EDITOR OUTROS');
+            }
+        }
+
+        const Finance = new FinanceEngine();
+        window.addEventListener('load', () => Finance.init());
+        
+        // Fechar modal clicando fora
+        Utils.$('editModal').addEventListener('click', (e) => {
+            if (e.target === Utils.$('editModal')) Finance.closeEdit();
         });
-    }
-}
-
-// INICIALIZAÇÃO
-update();
-
-</script>
+    </script>
+</body>
+</html>
