@@ -564,33 +564,91 @@ nextMonth() {
 this.updateMonthsList();
             }
 
-            renderRule(data, entrada) {
-                const essencial = data.filter(i => i.cat === 'Essencial').reduce((a,i) => a + i.valor, 0);
-                const estilo = data.filter(i => i.cat === 'Estilo').reduce((a,i) => a + i.valor, 0);
-                const investimento = data.filter(i => i.cat === 'Investimento').reduce((a,i) => a + i.valor, 0);
-                
-                if (entrada === 0) return Utils.$('ruleGrid').innerHTML = '<div style="grid-column:1/-1;text-align:center;opacity:0.5">Adicione renda para ver a regra 50-30-20</div>';
-                
-                const meta = { essencial: entrada*0.5, estilo: entrada*0.3, poupanca: entrada*0.2 };
-                Utils.$('ruleGrid').innerHTML = `
-                    <div class="rule-card rule-essential">
-                        <div class="rule-title">🏠 Necessidades (50%)</div>
-                        <div class="rule-value">${Utils.format(essencial)} / ${Utils.format(meta.essencial)}</div>
-                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(essencial/meta.essencial)*100)}%"></div></div>
-                    </div>
-                    <div class="rule-card rule-want">
-                        <div class="rule-title">🍔 Desejos (30%)</div>
-                        <div class="rule-value">${Utils.format(estilo)} / ${Utils.format(meta.estilo)}</div>
-                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(estilo/meta.estilo)*100)}%"></div></div>
-                    </div>
-                    <div class="rule-card rule-save">
-                        <div class="rule-title">💰 Poupança (20%)</div>
-                        <div class="rule-value">${Utils.format(investimento)} / ${Utils.format(meta.poupanca)}</div>
-                        <div class="rule-progress"><div class="rule-bar" style="width:${Math.min(100,(investimento/meta.poupanca)*100)}%"></div></div>
-                    </div>
-                `;
-            }
+renderRule(data, entrada) {
+    const essencialBase = data
+        .filter(i => i.cat === 'Essencial')
+        .reduce((a,i) => a + i.valor, 0);
 
+    const outros = data
+        .filter(i => i.cat === 'Outros')
+        .reduce((a,i) => a + i.valor, 0);
+
+    const estiloBase = data
+        .filter(i => i.cat === 'Estilo')
+        .reduce((a,i) => a + i.valor, 0);
+
+    const investimento = data
+        .filter(i => i.cat === 'Investimento')
+        .reduce((a,i) => a + i.valor, 0);
+
+    // 🔥 distribuição inteligente do "Outros"
+    const essencial = essencialBase + (outros * 0.7);
+    const estilo = estiloBase + (outros * 0.3);
+
+    if (entrada === 0) {
+        return Utils.$('ruleGrid').innerHTML =
+            '<div style="grid-column:1/-1;text-align:center;opacity:0.5">Adicione renda para ver a regra 50-30-20</div>';
+    }
+
+    // 🎯 metas
+    const metaEssencial = entrada * 0.5;
+    const metaEstilo = entrada * 0.3;
+    const metaInvest = entrada * 0.2;
+
+    // 📊 porcentagens (SEM limitar em 100)
+    const pEssencial = metaEssencial ? (essencial / metaEssencial) * 100 : 0;
+    const pEstilo = metaEstilo ? (estilo / metaEstilo) * 100 : 0;
+    const pInvest = metaInvest ? (investimento / metaInvest) * 100 : 0;
+
+    Utils.$('ruleGrid').innerHTML = `
+        <div class="rule-card rule-essential">
+            <div class="rule-title">🏠 Necessidades (50%)</div>
+            <div class="rule-value">${Utils.format(essencial)} / ${Utils.format(metaEssencial)}</div>
+            <div class="rule-progress">
+                <div class="rule-bar" style="width:${pEssencial}%; background:${pEssencial > 100 ? '#ef4444' : ''}"></div>
+            </div>
+        </div>
+
+        <div class="rule-card rule-want">
+            <div class="rule-title">🍔 Desejos (30%)</div>
+            <div class="rule-value">${Utils.format(estilo)} / ${Utils.format(metaEstilo)}</div>
+            <div class="rule-progress">
+                <div class="rule-bar" style="width:${pEstilo}%; background:${pEstilo > 100 ? '#ef4444' : ''}"></div>
+            </div>
+        </div>
+
+        <div class="rule-card rule-save">
+            <div class="rule-title">💰 Investimentos (20%)</div>
+            <div class="rule-value">${Utils.format(investimento)} / ${Utils.format(metaInvest)}</div>
+            <div class="rule-progress">
+                <div class="rule-bar" style="width:${pInvest}%; background:${pInvest < 100 ? '#f59e0b' : '#10b981'}"></div>
+            </div>
+        </div>
+    `;
+
+    // 🧠 FEEDBACK AUTOMÁTICO
+    let feedback = '';
+
+    if (pEssencial > 100) {
+        feedback += '⚠️ Necessidades acima do ideal.<br>';
+    }
+    if (pEstilo > 100) {
+        feedback += '⚠️ Muito gasto em estilo de vida.<br>';
+    }
+    if (pInvest < 100) {
+        feedback += '📉 Investimento abaixo do ideal.<br>';
+    }
+
+    if (!feedback) {
+        feedback = '✅ Ótima distribuição financeira!';
+    }
+
+    Utils.$('feedbackGrid').innerHTML += `
+        <div style="grid-column:1/-1;margin-top:10px;font-size:0.85rem;opacity:0.9">
+            ${feedback}
+        </div>
+    `;
+}
             renderFeedback(data) {
                 const cats = {};
                 data.forEach(i => cats[i.cat] = (cats[i.cat]||0) + i.valor);
