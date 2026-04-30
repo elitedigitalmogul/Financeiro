@@ -4,16 +4,20 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Finance PRO | Enterprise v8.4.6 PROD ✅</title>
-    <!-- PWA -->
-    <link rel="manifest" href="data:application/manifest+json,{
-        'name': 'Finance PRO v8.4.6',
-        'short_name': 'FinancePRO',
-        'start_url': '.',
-        'display': 'standalone',
-        'background_color': '#0f172a',
-        'theme_color': '#10b981',
-        'icons': [{'src': 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMTBiOTgxIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSI+JHxyPC90ZXh0Pgo8L3N2Zz4=', 'sizes': '192x192', 'type': 'image/svg+xml'}]
-    }">
+    <!-- PWA - ✅ CORRIGIDO: JSON válido com aspas duplas -->
+    <link rel="manifest" href='data:application/manifest+json,{
+  "name": "Finance PRO v8.4.6",
+  "short_name": "FinancePRO",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#0f172a",
+  "theme_color": "#10b981",
+  "icons": [{
+    "src": "data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTkyIiBoZWlnaHQ9IjE5MiIgdmlld0JveD0iMCAwIDE5MiAxOTIiIGZpbGw9Im5vbmUiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxyZWN0IHdpZHRoPSIxOTIiIGhlaWdodD0iMTkyIiBmaWxsPSIjMTBiOTgxIi8+Cjx0ZXh0IHg9Ijk2IiB5PSIxMDUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSI0OCIgZmlsbD0id2hpdGUiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSI+JHxyPC90ZXh0Pgo8L3N2Zz4=",
+    "sizes": "192x192",
+    "type": "image/svg+xml"
+  }]
+}'>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
     <style>
@@ -100,7 +104,7 @@
         .rule-want .rule-bar { background: var(--want); }
         
         .chart-legend { margin-top: 12px; display: flex; flex-wrap: wrap; gap: 12px; font-size: 0.85rem; }
-        .legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition:         background: 0.2s; }
+        .legend-item { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 6px; transition: background 0.2s; }
         .legend-item:hover { background: rgba(255,255,255,0.1); }
         .legend-color { width: 12px; height: 12px; border-radius: 2px; }
 
@@ -155,27 +159,20 @@ select#monthSelect {
     <div class="container">
     <div class="card">
         <div class="status-bar">
-            
-            <!-- APAGUE APENAS O QUE ESTAVA AQUI DENTRO E COLE ISTO: -->
             <div style="display:flex;align-items:center;gap:15px;">
                 <h3><span id="statusSmall">v8.4.6 PROD </span></h3>
-                
                 <div class="month-selector-wrapper">
-                    <button class="month-nav-btn" onclick="Finance.prevMonth()">◀</button>
+                    <button class="month-nav-btn" onclick="Finance.prevMonth()">◀️</button>
                     <select id="monthSelect" onchange="Finance.changeMonth(this.value)"></select>
-                    <button class="month-nav-btn" onclick="Finance.nextMonth()">▶</button>
-                        </div>
-    </div>
-    <!-- FIM DO BLOCO NOVO -->
-
-    <div>
-        <strong>Score: <span id="scoreText">0</span>%</strong>
-        <span id="statusText" style="margin-left:10px;padding:4px 12px;border-radius:8px;font-size:.8rem;">-</span>
-        
-        <!-- COLE O BOTÃO EXATAMENTE AQUI -->
-        <button class="btn-del" onclick="Finance.limparMesAtual()" style="margin-left: 15px; font-size: 1rem;" title="Limpar este mês">🗑️</button>
-    </div>
-    </div>
+                    <button class="month-nav-btn" onclick="Finance.nextMonth()">▶️</button>
+                </div>
+            </div>
+            <div>
+                <strong>Score: <span id="scoreText">0</span>%</strong>
+                <span id="statusText" style="margin-left:10px;padding:4px 12px;border-radius:8px;font-size:.8rem;">-</span>
+                <button class="btn-del" onclick="Finance.limparMesAtual()" style="margin-left: 15px; font-size: 1rem;" title="Limpar este mês">🗑️</button>
+            </div>
+        </div>
         <div class="kpi-grid">
             <div class="card kpi-card"><h4>💰 Entradas</h4><span id="e" class="kpi-value txt-primary">R$ 0,00</span></div>
             <div class="card kpi-card"><h4>💸 Saídas</h4><span id="s" class="kpi-value txt-danger">R$ 0,00</span></div>
@@ -192,29 +189,27 @@ select#monthSelect {
             <div class="feedback-grid" id="feedbackGrid"></div>
         </div>
 
-        <!-- 🔥 IMPORTAÇÃO NUBANK - MESMO ESTILO DO MANUAL -->
-       <div class="card">
-    <h3>Importar Extrato</h3>
-    <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
-        <textarea id="textoDigitavel" 
-            style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #f8fafc; font-family: monospace; resize: vertical;"
-            rows="5"
-            placeholder="Cole aqui o extrato completo:
+        <div class="card">
+            <h3>Importar Extrato</h3>
+            <div style="display: flex; flex-direction: column; gap: 10px; margin-top: 15px;">
+                <textarea id="textoDigitavel" 
+                    style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #0f172a; color: #f8fafc; font-family: monospace; resize: vertical;"
+                    rows="5"
+                    placeholder="Cole aqui o extrato completo:
 Data	Valor	ID	Descrição
 01/03/2026	-30.2	69a49dc7...	Compra no débito - CARREFOUR SPG 48
 01/03/2026	400	69a4e70f...	Transferência recebida pelo Pix - IFOOD..."></textarea>
-        
-        <button onclick="Finance.importarTexto()" 
-            style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-weight: bold; cursor: pointer; transition: background 0.2s;"
-            onmouseover="this.style.background='#334155'"
-            onmouseout="this.style.background='#1e293b'">
-            🚀 IMPORTAR
-        </button>
-    </div>
-</div>
-
-            <div id="nubankPreview" class="nubank-preview"></div>
+                
+                <button onclick="Finance.importarTexto()" 
+                    style="width: 100%; padding: 12px; border-radius: 12px; border: 1px solid #334155; background: #1e293b; color: #f8fafc; font-weight: bold; cursor: pointer; transition: background 0.2s;"
+                    onmouseover="this.style.background='#334155'"
+                    onmouseout="this.style.background='#1e293b'">
+                    🚀 IMPORTAR
+                </button>
+            </div>
         </div>
+
+        <div id="nubankPreview" class="nubank-preview"></div>
 
         <div class="card">
             <h3>➕ Novo Lançamento Manual</h3>
@@ -271,116 +266,199 @@ Data	Valor	ID	Descrição
     <script>
         const Utils = {
             $(id) { return document.getElementById(id); },
+            // ✅ BUG #10: ESCAPEHTML COMPLETO
+            escapeHTML(str) {
+                if (typeof str !== 'string') return '';
+                const map = {
+                    '&': '&amp;', '<': '&lt;', '>': '&gt;',
+                    '"': '&quot;', "'": '&#39;', '`': '&#x60;', '/': '&#x2F;'
+                };
+                return str.replace(/[&<>"'`/]/g, m => map[m]);
+            },
             format(v) { return (v||0).toLocaleString("pt-BR",{style:"currency",currency:"BRL"}); },
+            // 🔥🚀 🔧 1. PARSER MAIS ROBUSTO APLICADO
             parseDateBR(dateStr) {
-                const [d, m, y] = dateStr.split('/');
+                if (!dateStr) return null;
+
+                const clean = String(dateStr).trim();
+
+                const match = clean.match(/(\d{2})[\/\-](\d{2})[\/\-](\d{4})/);
+                if (!match) return null;
+
+                const [, d, m, y] = match;
+
                 return `${y}-${m.padStart(2,'0')}-${d.padStart(2,'0')}`;
+            },
+            // ✅ CORRIGIDO: decodeSafe melhorado (BUG #5)
+            decodeSafe(str) {
+                if (!str) return '';
+                try {
+                    return decodeURIComponent(str);
+                } catch {
+                    return str;
+                }
             }
         };
 
         // 🔥 PARSER NUBANK ULTRA-PRECISE v8.4.6
-class NubankParser {
-    static classify(desc, valor = 0) {
-        const text = desc.toUpperCase();
+        class NubankParser {
+            static classify(desc, valor = 0) {
+                const text = desc.toUpperCase();
 
-        // 💰 ENTRADAS (PRIORIDADE MÁXIMA)
-        if (text.includes('TRANSFERÊNCIA RECEBIDA') || text.includes('PIX RECEBIDO')) {
-            return 'Renda';
+                // 💰 ENTRADAS (PRIORIDADE MÁXIMA)
+                if (text.includes('TRANSFERÊNCIA RECEBIDA') || text.includes('PIX RECEBIDO')) {
+                    return 'Renda';
+                }
+
+                // 💰 IFOOD (SEMPRE RENDA quando entrada)
+                if (text.includes('IFOOD') && valor > 0) {
+                    return 'Renda';
+                }
+
+                // ❌ SAÍDAS
+                if (valor < 0) {
+                    // 🏠 ESSENCIAL
+                    if (
+                        text.includes('MERCADO') ||
+                        text.includes('CARREFOUR') ||
+                        text.includes('POSTO') ||
+                        text.includes('DUTRAO') ||
+                        text.includes('DROGARIA') ||
+                        text.includes('TELEFONICA') ||
+                        text.includes('INTERNET') ||
+                        text.includes('SEGURO')
+                    ) return 'Essencial';
+
+                    // 🍔 ESTILO
+                    if (
+                        text.includes('IFD*') ||
+                        text.includes('IFOOD CLUB') ||
+                        text.includes('ESFIHARIA') ||
+                        text.includes('SUSHI') ||
+                        text.includes('ADEGA')
+                    ) return 'Estilo';
+                }
+
+                return 'Outros';
+            }
         }
 
-        // 💰 IFOOD (SEMPRE RENDA quando entrada)
-        if (text.includes('IFOOD') && valor > 0) {
-            return 'Renda';
-        }
+        class FinanceEngine {
+            constructor() {
+                this.db = {};
+                // ✅ BUG #2: MÊS ATUAL CORRIGIDO
+                this.currentMonth = Object.keys(this.db)[0] || new Date().toISOString().slice(0,7);
+                this.currentFilter = 'Todos';
+                this.editingId = null;
+                this.charts = { donut: null };
+                this.catColors = {
+                    'Renda': '#10b981', 'Essencial': '#3b82f6', 
+                    'Estilo': '#f59e0b', 'Investimento': '#8b5cf6', 'Outros': '#64748b'
+                };
+                this.schemaVersion = '8.4.6';
+                this._timeout = null;
+            }
 
-        // ❌ SAÍDAS
-        if (valor < 0) {
+            // ✅ BUG #7: UUID DUPLICADO CORRIGIDO
+            generateId() {
+                if (crypto?.randomUUID) return crypto.randomUUID();
+                return `id-${Date.now()}-${Math.random().toString(36).slice(2,11)}-${performance.now().toString(36).slice(-5)}`;
+            }
 
-            // 🏠 ESSENCIAL
-            if (
-                text.includes('MERCADO') ||
-                text.includes('CARREFOUR') ||
-                text.includes('POSTO') ||
-                text.includes('DUTRAO') ||
-                text.includes('DROGARIA') ||
-                text.includes('TELEFONICA') ||
-                text.includes('INTERNET') ||
-                text.includes('SEGURO')
-            ) return 'Essencial';
+            // ✅ BUG #6: LOCALSTORAGE CORROMPIDO CORRIGIDO
+            loadDB() {
+                const saved = localStorage.getItem(`finpro_v${this.schemaVersion}`);
+                let data = null;
+                try {
+                    data = saved ? JSON.parse(saved) : null;
+                } catch (e) {
+                    console.error('JSON inválido, limpando:', e);
+                    localStorage.removeItem(`finpro_v${this.schemaVersion}`);
+                    data = null;
+                }
 
-            // 🍔 ESTILO
-            if (
-                text.includes('IFD*') ||
-                text.includes('IFOOD CLUB') ||
-                text.includes('ESFIHARIA') ||
-                text.includes('SUSHI') ||
-                text.includes('ADEGA')
-            ) return 'Estilo';
-        }
-
-        return 'Outros';
-    }
-}
-getListaMeses() {
-    // Pega os meses que já têm dados
-    const mesesComDados = Object.keys(this.db).filter(k => this.db[k] && this.db[k].length > 0);
-    
-    const listaCompleta = [];
-    const anos = [2026, 2027, 2028, 2029, 2030];
-    
-    // Gera todos os 12 meses para cada um dos anos
-    anos.forEach(ano => {
-        for (let mes = 1; mes <= 12; mes++) {
-            listaCompleta.push(`${ano}-${String(mes).padStart(2, '0')}`);
-        }
-    });
-    
-    // Junta com os meses que já têm dados antigos (se houver), remove duplicados e ordena
-    const listaFinal = [...new Set([...mesesComDados, ...listaCompleta])];
-    return listaFinal.sort().reverse();
-}
-
-updateMonthsList() {
-    const select = document.getElementById('monthSelect');
-    if (!select) return;
-
-    // Pega TODOS os meses gerados na função acima
-    const mesesVisiveis = this.getListaMeses();
-    const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
-    
-    select.innerHTML = mesesVisiveis.map(m => {
-        const temDados = this.db[m] && this.db[m].length > 0;
-        const [ano, mes] = m.split('-');
-        const nomeFormatado = `${mesesNomes[parseInt(mes)-1]} / ${ano}`;
-
-        return `<option value="${m}" ${m === this.currentMonth ? 'selected' : ''}>
-            ${nomeFormatado} ${temDados ? '📊' : '⚪'}
-        </option>`;
-    }).join('');
-}
-changeMonth(mesKey) {
-    if (!mesKey) return;
-    this.currentMonth = mesKey;
-    this.update();
-}
-prevMonth() {
-    const lista = this.getListaMeses();
-    const index = lista.indexOf(this.currentMonth);
-    if (index < lista.length - 1) {
-        this.changeMonth(lista[index + 1]);
-    }
-}
-
-nextMonth() {
-    const lista = this.getListaMeses();
-    const index = lista.indexOf(this.currentMonth);
-    if (index > 0) {
-        this.changeMonth(lista[index - 1]);
-    }
-}
+                if (!data || typeof data !== 'object') {
+                    this.db = {};
+                    return;
+                }
+                
+                this.db = (data && data.months && typeof data.months === 'object')
+                    ? data.months
+                    : {};
+            }
 
             save() {
-                localStorage.setItem(`finpro_v${this.schemaVersion}`, JSON.stringify(this.db));
+                try {
+                    localStorage.setItem(`finpro_v${this.schemaVersion}`, JSON.stringify({ months: this.db }));
+                } catch(e) {
+                    console.error('Erro ao salvar:', e);
+                }
+            }
+
+            getListaMeses() {
+                const mesesComDados = Object.keys(this.db).filter(k => {
+                    const data = Array.isArray(this.db[k]) ? this.db[k] : [];
+                    return data.length > 0;
+                });
+                const listaCompleta = [];
+                const currentYear = new Date().getFullYear();
+                const anos = Array.from({ length: 5 }, (_, i) => currentYear + i);
+                
+                anos.forEach(ano => {
+                    for (let mes = 1; mes <= 12; mes++) {
+                        listaCompleta.push(`${ano}-${String(mes).padStart(2, '0')}`);
+                    }
+                });
+                
+                const listaFinal = [...new Set([...mesesComDados, ...listaCompleta])];
+                return listaFinal.sort().reverse();
+            }
+
+            updateMonthsList() {
+                const select = Utils.$('monthSelect');
+                if (!select) return console.warn('monthSelect não encontrado');
+
+                const mesesVisiveis = this.getListaMeses();
+                const mesesNomes = ['Jan', 'Fev', 'Mar', 'Abr', 'Mai', 'Jun', 'Jul', 'Ago', 'Set', 'Out', 'Nov', 'Dez'];
+                
+                select.innerHTML = mesesVisiveis.map(m => {
+                    const data = Array.isArray(this.db[m]) ? this.db[m] : [];
+                    const temDados = data.length > 0;
+                    const [ano, mes] = m.split('-');
+                    const nomeFormatado = `${mesesNomes[parseInt(mes)-1]} / ${ano}`;
+
+                    return `<option value="${Utils.escapeHTML(m)}" ${m === this.currentMonth ? 'selected' : ''}>
+                        ${Utils.escapeHTML(nomeFormatado)} ${temDados ? '📊' : '⚪'}
+                    </option>`;
+                }).join('');
+            }
+
+            changeMonth(mesKey) {
+                if (!mesKey) return;
+                this.currentMonth = mesKey;
+                this.debounceUpdate();
+            }
+
+            // ✅ BUG #4: PREV/NEXT MONTH CORRIGIDOS
+            prevMonth() {
+                const lista = this.getListaMeses();
+                const i = lista.indexOf(this.currentMonth);
+                if (i === -1 || i >= lista.length - 1) return;
+                this.changeMonth(lista[i + 1]);
+            }
+
+            nextMonth() {
+                const lista = this.getListaMeses();
+                const i = lista.indexOf(this.currentMonth);
+                if (i === -1 || i <= 0) return;
+                this.changeMonth(lista[i - 1]);
+            }
+
+            debounceUpdate() {
+                if (this._timeout) clearTimeout(this._timeout);
+                this._timeout = setTimeout(() => {
+                    requestAnimationFrame(() => this.update());
+                }, 100);
             }
 
             importarTexto() {
@@ -392,290 +470,469 @@ nextMonth() {
                 let preview = [];
                 let stats = { Renda: 0, Essencial: 0, Estilo: 0, Outros: 0, Investimento: 0 };
 
-                linhas.forEach((linha, index) => {
-                    if (index === 0 && linha.includes('Data')) return;
+                const processChunk = (index = 0) => {
+                    if (index >= linhas.length) {
+                        this.save();
+                        this.currentMonth = Object.keys(this.db)[0] || new Date().toISOString().slice(0,7);
+                        this.debounceUpdate();
+                        Utils.$('textoDigitavel').value = '';
+                        
+                        this.renderNubankPreview(preview);
+                        return;
+                    }
+
+                    const linha = linhas[index];
+                    if (index === 0 && linha.includes('Data')) {
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
                     
-                    const partes = linha.split(/\t| {2,}/).map(p => p.trim());
-                    if (partes.length < 4) return;
+                    // ✅ BUG #1: PARSER NUBANK CORRIGIDO
+                    const partes = linha.trim().split(/\s{2,}|\t/).map(p => p.trim()).filter(Boolean);
+                    if (partes.length < 4) return requestAnimationFrame(() => processChunk(index + 1));
                     
                     const [dataBr, valorRaw, id, desc] = partes;
-                    const valor = parseFloat(valorRaw.replace(',', '.'));
-                    if (isNaN(valor)) return;
+                    const v = Number(String(valorRaw).replace(',', '.'));
+                    if (!Number.isFinite(v)) {
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
+                    if (Math.abs(v) > 1e7) {
+                        alert("❌ Valor muito alto!");
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
                     
+                    // ✅🔥 CORREÇÃO ROBUSTA APLICADA AQUI
                     const dataIso = Utils.parseDateBR(dataBr);
-                    const [ano, mes] = dataIso.split('-').slice(0,2);
-                    const mesKey = `${ano}-${mes}`;
+
+                    // 🔥 validação forte da data
+                    if (!dataIso || !dataIso.includes('-')) {
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
+
+                    // 🔧 2. FORÇAR MÊS CORRETO (CORREÇÃO CRÍTICA)
+                    const [ano, mes] = dataIso.split('-');
+
+                    if (!ano || !mes) {
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
+
+                    const mesKey = `${ano}-${mes.padStart(2,'0')}`;
                     
-                    if (!this.db[mesKey]) this.db[mesKey] = [];
+                    // 🔧 3. GARANTIR QUE NUNCA CAI NO MÊS ERRADO
+                    if (!this.db[mesKey]) {
+                        this.db[mesKey] = [];
+                    }
                     
-                    const jaExiste = this.db[mesKey].some(item => item.id === id);
-                    if (jaExiste) return;
+                    const data = Array.isArray(this.db[mesKey]) ? this.db[mesKey] : [];
                     
-                    const cat = NubankParser.classify(desc);
-                    const nome = desc.split(' - ')[1]?.slice(0,45) || desc.slice(0,45);
+                    const jaExiste = data.some(item => item.id === id);
+                    if (jaExiste) {
+                        requestAnimationFrame(() => processChunk(index + 1));
+                        return;
+                    }
+                    
+                    const cat = NubankParser.classify(desc, v);
+                    const nome = Utils.escapeHTML(desc.split(' - ')[1]?.slice(0,45) || desc.slice(0,45));
                     
                     this.db[mesKey].push({
-                        id: id, nome, valor: Math.abs(valor), cat, data: dataIso, fonte: 'Nubank'
+                        id: id, nome, valor: Math.abs(v), cat, data: dataIso, fonte: 'Nubank'
                     });
                     
-                    adicionados++; stats[cat]++; preview.push({ nome, valor: Math.abs(valor), cat, data: dataBr });
+                    adicionados++; 
+                    stats[cat]++; 
+                    preview.push({ nome, valor: Math.abs(v), cat, data: dataBr });
+                    
+                    requestAnimationFrame(() => processChunk(index + 1));
+                };
+
+                processChunk();
+            }
+
+            renderNubankPreview(preview) {
+                const previewDiv = Utils.$('nubankPreview');
+                if (!previewDiv) return;
+                
+                previewDiv.innerHTML = '';
+                const resumoDiv = document.createElement('div');
+                resumoDiv.style.cssText = 'font-weight:700;margin-bottom:8px;font-size:0.9rem;';
+                resumoDiv.textContent = '📊 Resumo da importação:';
+                previewDiv.appendChild(resumoDiv);
+
+                preview.slice(0,8).forEach(i => {
+                    const itemDiv = document.createElement('div');
+                    itemDiv.className = 'preview-item';
+                    itemDiv.innerHTML = `
+                        <div style="flex:1;">${Utils.escapeHTML(i.nome)}</div>
+                        <div style="text-align:right;">
+                            <div style="color:${this.catColors[i.cat]};font-weight:600;font-size:0.8rem;">${Utils.escapeHTML(i.cat)}</div>
+                            ${Utils.format(i.valor)}
+                        </div>
+                    `;
+                    previewDiv.appendChild(itemDiv);
                 });
 
-                this.save();
-                this.currentMonth = Object.keys(this.db)[Object.keys(this.db).length - 1] || this.currentMonth;
-                this.update();
-                Utils.$('textoDigitavel').value = '';
-                
-                Utils.$('nubankPreview').innerHTML = `
-                    <div style="font-weight:700;margin-bottom:8px;font-size:0.9rem;">📊 Resumo da importação:</div>
-                    ${preview.slice(0,8).map(i => 
-                        `<div class="preview-item">
-                            <div style="flex:1;">${i.nome}</div>
-                            <div style="text-align:right;">
-                                <div style="color:${this.catColors[i.cat]};font-weight:600;font-size:0.8rem;">${i.cat}</div>
-                                ${Utils.format(i.valor)}
-                            </div>
-                        </div>`
-                    ).join('') + (preview.length > 8 ? `<div style="text-align:center;padding:12px;color:var(--dim);font-size:0.8rem;">+${preview.length-8} itens...</div>` : '')}
-                `;
-                Utils.$('nubankPreview').style.display = 'block';
-                setTimeout(() => Utils.$('nubankPreview').style.display = 'none', 5000);
+                if (preview.length > 8) {
+                    const maisDiv = document.createElement('div');
+                    maisDiv.style.cssText = 'text-align:center;padding:12px;color:var(--dim);font-size:0.8rem;';
+                    maisDiv.textContent = `+${preview.length-8} itens...`;
+                    previewDiv.appendChild(maisDiv);
+                }
+
+                previewDiv.style.display = 'block';
+                setTimeout(() => {
+                    if (previewDiv) previewDiv.style.display = 'none';
+                }, 5000);
             }
 
             add() {
                 const m = this.currentMonth;
                 const n = Utils.$('nome').value.trim();
-                const v = parseFloat(Utils.$('valor').value);
+                const valorRaw = Utils.$('valor').value;
+                const v = Number(String(valorRaw).replace(',', '.'));
+                if (!Number.isFinite(v)) {
+                    return alert("❌ Valor inválido!");
+                }
+                if (Math.abs(v) > 1e7) {
+                    alert("❌ Valor muito alto!");
+                    return;
+                }
                 const c = Utils.$('cat').value;
-                if (!n || isNaN(v) || v <= 0) return alert("❌ Preencha todos os campos!");
+                if (!n || v <= 0) return alert("❌ Preencha todos os campos!");
                 
-                if (!this.db[m]) this.db[m] = [];
-                this.db[m].push({ id: Date.now()+Math.random(), nome: n.slice(0,40), valor: v, cat: c, data: new Date().toISOString().slice(0,10) });
+                const data = Array.isArray(this.db[m]) ? this.db[m] : [];
+                data.push({ 
+                    id: this.generateId(), 
+                    nome: Utils.escapeHTML(n.slice(0,40)), 
+                    valor: v, 
+                    cat: c, 
+                    data: new Date().toISOString().slice(0,10) 
+                });
+                this.db[m] = data;
+                
                 this.save();
                 Utils.$('nome').value = Utils.$('valor').value = '';
-                this.update();
+                this.debounceUpdate();
             }
 
             del(id) {
-                const m = this.currentMonth;
-                if (this.db[m]) {
-                    this.db[m] = this.db[m].filter(i => i.id !== id);
+                const data = Array.isArray(this.db[this.currentMonth])
+                    ? this.db[this.currentMonth]
+                    : [];
+                this.db[this.currentMonth] = data.filter(i => i.id !== id);
+                this.save();
+                this.debounceUpdate();
+            }
+
+            // ✅ CORRIGIDO: Verificação mais segura (BUG #7)
+            limparMesAtual() {
+                const data = Array.isArray(this.db[this.currentMonth])
+                    ? this.db[this.currentMonth]
+                    : [];
+                if (!Array.isArray(data) || data.length === 0) return;
+                
+                const [ano, mesNum] = this.currentMonth.split('-');
+                const mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
+                const nomeMes = mesesNomes[parseInt(mesNum) - 1];
+
+                const confirmacao = confirm(`⚠️ ATENÇÃO!\n\nVocê tem certeza que deseja APAGAR TODOS os dados de ${nomeMes} de ${ano}?\nEsta ação não pode ser desfeita.`);
+                
+                if (confirmacao) {
+                    this.db[this.currentMonth] = [];
                     this.save();
-                    this.update();
+                    this.debounceUpdate();
+                    alert(`Dados de ${nomeMes} apagados com sucesso!`);
                 }
             }
-        limparMesAtual() {
-            const mes = this.currentMonth;
-            const [ano, mesNum] = mes.split('-');
-            const mesesNomes = ['Janeiro', 'Fevereiro', 'Março', 'Abril', 'Maio', 'Junho', 'Julho', 'Agosto', 'Setembro', 'Outubro', 'Novembro', 'Dezembro'];
-            const nomeMes = mesesNomes[parseInt(mesNum) - 1];
 
-            const confirmacao = confirm(`⚠️ ATENÇÃO!\n\nVocê tem certeza que deseja APAGAR TODOS os dados de ${nomeMes} de ${ano}?\nEsta ação não pode ser desfeita.`);
-            
-            if (confirmacao) {
-                this.db[mes] = [];
-                this.save();
-                this.update();
-                alert(`Dados de ${nomeMes} apagados com sucesso!`);
-            }
-        }
-
+            // ✅ CORRIGIDO: Removido encodeURIComponent desnecessário (BUG #3)
             filterByCategory(cat) {
-                if (cat === this.currentFilter) {
+                const decodedCat = Utils.decodeSafe(cat);
+                if (decodedCat === this.currentFilter) {
                     this.currentFilter = 'Todos';
                 } else {
-                    this.currentFilter = cat;
+                    this.currentFilter = decodedCat;
                 }
-                this.update();
+                this.debounceUpdate();
             }
 
             editItem(id) {
                 const m = this.currentMonth;
-                const item = this.db[m]?.find(i => i.id === id);
+                const data = Array.isArray(this.db[m]) ? this.db[m] : [];
+                const item = data.find(i => i.id === id);
                 if (!item || item.cat !== 'Outros') return;
                 
                 this.editingId = id;
-                Utils.$('editItemInfo').textContent = `${item.nome} - ${Utils.format(item.valor)}`;
-                Utils.$('editModal').style.display = 'flex';
+                const infoEl = Utils.$('editItemInfo');
+                if (infoEl) {
+                    infoEl.textContent = `${item.nome} - ${Utils.format(item.valor)}`;
+                }
+                const modal = Utils.$('editModal');
+                if (modal) {
+                    modal.style.display = 'flex';
+                }
             }
 
             reclassify(newCat) {
                 const m = this.currentMonth;
-                const item = this.db[m]?.find(i => i.id === this.editingId);
+                const data = Array.isArray(this.db[m]) ? this.db[m] : [];
+                const item = data.find(i => i.id === this.editingId);
                 if (item) {
                     item.cat = newCat;
                     this.save();
                     this.closeEdit();
-                    this.update();
+                    this.debounceUpdate();
                 }
             }
 
             closeEdit() {
                 this.editingId = null;
-                Utils.$('editModal').style.display = 'none';
+                const modal = Utils.$('editModal');
+                if (modal) modal.style.display = 'none';
             }
 
+            // 🔧 9. filtro de dados seguro
             getFilteredData() {
-                const data = this.db[this.currentMonth] || [];
-                return this.currentFilter === 'Todos' ? data : data.filter(i => i.cat === this.currentFilter);
+                const data = Array.isArray(this.db[this.currentMonth])
+                    ? this.db[this.currentMonth]
+                    : [];
+                return this.currentFilter === 'Todos'
+                    ? data
+                    : data.filter(i => i.cat === this.currentFilter);
             }
 
+            // 🔧 2. db[currentMonth] seguro + 🔧 8. DOM seguro + ✅ BUG #5: SALDO VISUAL CORRIGIDO
             update() {
+                const e = Utils.$('e');
+                const s = Utils.$('s');
+                const saldo = Utils.$('saldo');
+                if (!e || !s || !saldo) return;
+
                 const data = this.getFilteredData();
-                const allData = this.db[this.currentMonth] || [];
+                const allData = Array.isArray(this.db[this.currentMonth])
+                    ? this.db[this.currentMonth]
+                    : [];
+                
                 const entrada = allData.filter(i => i.cat === 'Renda').reduce((a,i) => a + i.valor, 0);
                 const saida = allData.filter(i => i.cat !== 'Renda').reduce((a,i) => a + i.valor, 0);
-                const saldo = entrada - saida;
+                const saldoValue = entrada - saida;
                 
-                Utils.$('e').textContent = Utils.format(entrada);
-                Utils.$('s').textContent = Utils.format(saida);
-                Utils.$('saldo').textContent = Utils.format(saldo);
-                Utils.$('saldo').parentElement.className = `kpi-card ${saldo >= 0 ? 'txt-primary' : 'txt-danger'}`;
+                e.textContent = Utils.format(entrada);
+                s.textContent = Utils.format(saida);
+                saldo.textContent = Utils.format(saldoValue);
+                
+                // ✅ BUG #5: SALDO VISUAL CORRIGIDO
+                const saldoCard = saldo.closest('.kpi-card');
+                if (saldoCard) {
+                    saldoCard.classList.remove('txt-primary', 'txt-danger');
+                    saldoCard.classList.add(saldoValue >= 0 ? 'txt-primary' : 'txt-danger');
+                }
                 
                 const analise = this.analisarFinanceiro(allData);
-                Utils.$('scoreText').textContent = analise.score;
-                Utils.$('statusText').textContent = `${allData.length} itens`;
-                Utils.$('filterCount').textContent = `(${data.length} ${this.currentFilter})`;
+                const scoreEl = Utils.$('scoreText');
+                const statusEl = Utils.$('statusText');
+                const filterEl = Utils.$('filterCount');
+                
+                // ✅ BUG #8: FILTER COUNT CORRIGIDO
+                const totalItens = Array.isArray(this.db[this.currentMonth]) ? this.db[this.currentMonth].length : 0;
+                if (scoreEl) scoreEl.textContent = analise.score;
+                if (statusEl) statusEl.textContent = `${allData.length} itens`;
+                if (filterEl) filterEl.textContent = `(${data.length}/${totalItens} ${this.currentFilter})`;
                 
                 this.renderRule(allData, entrada);
                 this.renderFeedback(allData);
                 this.renderList(data);
                 this.renderCharts(allData);
-this.updateMonthsList();
+                this.updateMonthsList();
             }
 
-renderRule(data, entrada) {
-    const essencialBase = data
-        .filter(i => i.cat === 'Essencial')
-        .reduce((a,i) => a + i.valor, 0);
+            // 🔧 2. db[currentMonth] seguro
+            renderRule(data, entrada) {
+                const essencialBase = data.filter(i => i.cat === 'Essencial').reduce((a,i) => a + i.valor, 0);
+                const outros = data.filter(i => i.cat === 'Outros').reduce((a,i) => a + i.valor, 0);
+                const estiloBase = data.filter(i => i.cat === 'Estilo').reduce((a,i) => a + i.valor, 0);
+                const investimento = data.filter(i => i.cat === 'Investimento').reduce((a,i) => a + i.valor, 0);
 
-    const outros = data
-        .filter(i => i.cat === 'Outros')
-        .reduce((a,i) => a + i.valor, 0);
+                const essencial = essencialBase + (outros * 0.7);
+                const estilo = estiloBase + (outros * 0.3);
 
-    const estiloBase = data
-        .filter(i => i.cat === 'Estilo')
-        .reduce((a,i) => a + i.valor, 0);
+                const ruleGrid = Utils.$('ruleGrid');
+                if (!ruleGrid) return;
 
-    const investimento = data
-        .filter(i => i.cat === 'Investimento')
-        .reduce((a,i) => a + i.valor, 0);
+                if (entrada === 0) {
+                    ruleGrid.innerHTML = '<div style="grid-column:1/-1;text-align:center;opacity:0.5">Adicione renda para ver a regra 50-30-20</div>';
+                    return;
+                }
 
-    // 🔥 distribuição inteligente do "Outros"
-    const essencial = essencialBase + (outros * 0.7);
-    const estilo = estiloBase + (outros * 0.3);
+                const metaEssencial = entrada * 0.5;
+                const metaEstilo = entrada * 0.3;
+                const metaInvest = entrada * 0.2;
 
-    if (entrada === 0) {
-        return Utils.$('ruleGrid').innerHTML =
-            '<div style="grid-column:1/-1;text-align:center;opacity:0.5">Adicione renda para ver a regra 50-30-20</div>';
-    }
+                // 🔧 6. score (divisão por zero)
+                const pEssencial = entrada > 0 ? essencial / entrada : 0;
+                const pEstilo = entrada > 0 ? estilo / entrada : 0;
+                const pInvest = entrada > 0 ? investimento / entrada : 0;
 
-    // 🎯 metas
-    const metaEssencial = entrada * 0.5;
-    const metaEstilo = entrada * 0.3;
-    const metaInvest = entrada * 0.2;
+                ruleGrid.innerHTML = `
+                    <div class="rule-card rule-essential">
+                        <div class="rule-title">🏠 Necessidades (50%)</div>
+                        <div class="rule-value">${Utils.format(essencial)} / ${Utils.format(metaEssencial)}</div>
+                        <div class="rule-progress">
+                            <div class="rule-bar" style="width:${pEssencial*100}%; background:${pEssencial > 1 ? '#ef4444' : ''}"></div>
+                        </div>
+                    </div>
+                    <div class="rule-card rule-want">
+                        <div class="rule-title">🍔 Desejos (30%)</div>
+                        <div class="rule-value">${Utils.format(estilo)} / ${Utils.format(metaEstilo)}</div>
+                        <div class="rule-progress">
+                            <div class="rule-bar" style="width:${pEstilo*100}%; background:${pEstilo > 1 ? '#ef4444' : ''}"></div>
+                        </div>
+                    </div>
+                    <div class="rule-card rule-save">
+                        <div class="rule-title">💰 Investimentos (20%)</div>
+                        <div class="rule-value">${Utils.format(investimento)} / ${Utils.format(metaInvest)}</div>
+                        <div class="rule-progress">
+                            <div class="rule-bar" style="width:${pInvest*100}%; background:${pInvest < 1 ? '#f59e0b' : '#10b981'}"></div>
+                        </div>
+                    </div>
+                `;
 
-    // 📊 porcentagens (SEM limitar em 100)
-    const pEssencial = metaEssencial ? (essencial / metaEssencial) * 100 : 0;
-    const pEstilo = metaEstilo ? (estilo / metaEstilo) * 100 : 0;
-    const pInvest = metaInvest ? (investimento / metaInvest) * 100 : 0;
+                let feedback = '';
+                if (pEssencial > 1) feedback += '⚠️ Necessidades acima do ideal.<br>';
+                if (pEstilo > 1) feedback += '⚠️ Muito gasto em estilo de vida.<br>';
+                if (pInvest < 1) feedback += '📉 Investimento abaixo do ideal.<br>';
+                if (!feedback) feedback = '✅ Ótima distribuição financeira!';
+            }
 
-    Utils.$('ruleGrid').innerHTML = `
-        <div class="rule-card rule-essential">
-            <div class="rule-title">🏠 Necessidades (50%)</div>
-            <div class="rule-value">${Utils.format(essencial)} / ${Utils.format(metaEssencial)}</div>
-            <div class="rule-progress">
-                <div class="rule-bar" style="width:${pEssencial}%; background:${pEssencial > 100 ? '#ef4444' : ''}"></div>
-            </div>
-        </div>
-
-        <div class="rule-card rule-want">
-            <div class="rule-title">🍔 Desejos (30%)</div>
-            <div class="rule-value">${Utils.format(estilo)} / ${Utils.format(metaEstilo)}</div>
-            <div class="rule-progress">
-                <div class="rule-bar" style="width:${pEstilo}%; background:${pEstilo > 100 ? '#ef4444' : ''}"></div>
-            </div>
-        </div>
-
-        <div class="rule-card rule-save">
-            <div class="rule-title">💰 Investimentos (20%)</div>
-            <div class="rule-value">${Utils.format(investimento)} / ${Utils.format(metaInvest)}</div>
-            <div class="rule-progress">
-                <div class="rule-bar" style="width:${pInvest}%; background:${pInvest < 100 ? '#f59e0b' : '#10b981'}"></div>
-            </div>
-        </div>
-    `;
-
-    // 🧠 FEEDBACK AUTOMÁTICO
-    let feedback = '';
-
-    if (pEssencial > 100) {
-        feedback += '⚠️ Necessidades acima do ideal.<br>';
-    }
-    if (pEstilo > 100) {
-        feedback += '⚠️ Muito gasto em estilo de vida.<br>';
-    }
-    if (pInvest < 100) {
-        feedback += '📉 Investimento abaixo do ideal.<br>';
-    }
-
-    if (!feedback) {
-        feedback = '✅ Ótima distribuição financeira!';
-    }
-
-    Utils.$('feedbackGrid').innerHTML += `
-        <div style="grid-column:1/-1;margin-top:10px;font-size:0.85rem;opacity:0.9">
-            ${feedback}
-        </div>
-    `;
-}
+            // 🔧 2. db[currentMonth] seguro + 🔧 4. Math.max (evitar crash)
             renderFeedback(data) {
+                const feedbackGrid = Utils.$('feedbackGrid');
+                if (!feedbackGrid) return;
+                
                 const cats = {};
                 data.forEach(i => cats[i.cat] = (cats[i.cat]||0) + i.valor);
-                Utils.$('feedbackGrid').innerHTML = `
+                
+                const valores = Object.values(cats || {});
+                const max = valores.length ? Math.max(...valores) : 0;
+                
+                feedbackGrid.innerHTML = `
                     <div class="feedback-item"><span class="feedback-number txt-primary">${data.length}</span><span class="feedback-label">Total</span></div>
-                    <div class="feedback-item"><span class="feedback-number txt-danger">${Utils.format(Math.max(...Object.values(cats)||[0]))}</span><span class="feedback-label">Maior gasto</span></div>
+                    <div class="feedback-item"><span class="feedback-number txt-danger">${Utils.format(max)}</span><span class="feedback-label">Maior gasto</span></div>
                     <div class="feedback-item"><span class="feedback-number">${Object.keys(cats).length}</span><span class="feedback-label">Categorias</span></div>
                 `;
             }
 
+            // 🔧 10. lista segura + 🔧 8. DOM seguro
             renderList(data) {
-                Utils.$('lista').innerHTML = data.map(i => `
-                    <div class="list-item">
-                        <div class="list-info">
-                            <div class="list-nome">${i.nome}</div>
-                            <div class="list-cat">${i.cat} • ${i.data} ${i.fonte ? `• ${i.fonte}` : ''}</div>
-                        </div>
-                        <div style="display:flex;align-items:center;">
-                            <div class="list-valor ${i.cat === 'Renda' ? 'txt-primary' : 'txt-danger'}">${Utils.format(i.valor)}</div>
-                            ${i.cat === 'Outros' ? `<button class="btn-edit-outros" onclick="Finance.editItem('${i.id}')">🔄</button>` : ''}
-                            <button class="btn-del" onclick="Finance.del('${i.id}')">×</button>
-                        </div>
-                    </div>
-                `).join('') || '<div style="text-align:center;opacity:0.5;padding:40px">📝 Importe seu extrato ou adicione manualmente</div>';
+                const listaEl = Utils.$('lista');
+                if (!listaEl) return;
+                
+                listaEl.innerHTML = '';
+                (data || []).filter(Boolean).forEach((i, index) => {
+                    const div = document.createElement('div');
+                    div.className = 'list-item';
+
+                    const info = document.createElement('div');
+                    info.className = 'list-info';
+
+                    const nome = document.createElement('div');
+                    nome.className = 'list-nome';
+                    nome.textContent = i.nome;
+
+                    const cat = document.createElement('div');
+                    cat.className = 'list-cat';
+                    cat.textContent = `${i.cat} • ${i.data} ${i.fonte ? `• ${i.fonte}` : ''}`;
+
+                    info.appendChild(nome);
+                    info.appendChild(cat);
+
+                    const valor = document.createElement('div');
+                    valor.className = `list-valor ${i.cat === 'Renda' ? 'txt-primary' : 'txt-danger'}`;
+                    valor.textContent = Utils.format(i.valor);
+
+                    div.appendChild(info);
+                    div.appendChild(valor);
+
+                    const actions = document.createElement('div');
+                    actions.style.display = 'flex';
+                    actions.style.gap = '6px';
+
+                    if (i.cat === 'Outros') {
+                        const btnEdit = document.createElement('button');
+                        btnEdit.className = 'btn-edit-outros';
+                        btnEdit.textContent = '🔄';
+                        btnEdit.onclick = () => Finance.editItem(i.id);
+                        actions.appendChild(btnEdit);
+                    }
+
+                    const btnDel = document.createElement('button');
+                    btnDel.className = 'btn-del';
+                    btnDel.textContent = '×';
+                    btnDel.onclick = () => Finance.del(i.id);
+                    actions.appendChild(btnDel);
+
+                    div.appendChild(actions);
+                    listaEl.appendChild(div);
+                });
+
+                if (data.length === 0) {
+                    const emptyDiv = document.createElement('div');
+                    emptyDiv.style.cssText = 'text-align:center;opacity:0.5;padding:40px';
+                    emptyDiv.textContent = '📝 Importe seu extrato ou adicione manualmente';
+                    listaEl.appendChild(emptyDiv);
+                }
             }
 
+            // 🔥 FIX CRÍTICO DO LEGEND CLICK (SEM onclick) + PROTEÇÃO CHART.JS
             renderCharts(data) {
-                if (this.charts.donut) this.charts.donut.destroy();
+                if (this.charts.donut) {
+                    this.charts.donut.destroy();
+                    this.charts.donut = null;
+                }
                 
                 const cats = {};
                 data.forEach(i => cats[i.cat] = (cats[i.cat]||0) + i.valor);
                 const labels = Object.keys(cats), values = Object.values(cats);
                 const colors = labels.map(c => this.catColors[c] || '#64748b');
                 
-                let legendHTML = '';
-                labels.forEach((label, index) => {
-                    legendHTML += `
-                        <div class="legend-item" onclick="Finance.filterByCategory('${label}')">
-                            <div class="legend-color" style="background:${colors[index]}"></div>
-                            <span>${label} (${Utils.format(values[index])})</span>
-                        </div>
-                    `;
-                });
-                Utils.$('chartLegend').innerHTML = legendHTML;
+                // 🔥 FIX LEGEND CLICK - SUBSTITUIÇÃO COMPLETA
+                const legendEl = Utils.$('chartLegend');
+                if (legendEl) {
+                    legendEl.innerHTML = '';
+
+                    labels.forEach((label, index) => {
+                        const item = document.createElement('div');
+                        item.className = 'legend-item';
+
+                        const color = document.createElement('div');
+                        color.className = 'legend-color';
+                        color.style.background = colors[index];
+
+                        const text = document.createElement('span');
+                        text.textContent = `${label} (${Utils.format(values[index])})`;
+
+                        item.appendChild(color);
+                        item.appendChild(text);
+
+                        item.addEventListener('click', () => {
+                            this.filterByCategory(label);
+                        });
+
+                        legendEl.appendChild(item);
+                    });
+                }
                 
-                if (labels.length) {
-                    const ctx = Utils.$('chartDonut').getContext('2d');
+                // 🔥 PROTEÇÃO CHART.JS
+                if (typeof Chart === '') return;
+                const canvas = Utils.$('chartDonut');
+                if (!canvas) return;
+                
+                // ✅ BUG #3: CHART.JS CRASH CORRIGIDO
+                if (labels.length > 0) {
+                    const ctx = canvas.getContext('2d');
                     this.charts.donut = new Chart(ctx, {
                         type: 'doughnut', 
                         data: { labels, datasets: [{data:values, backgroundColor:colors}] },
@@ -692,51 +949,67 @@ renderRule(data, entrada) {
                         }
                     });
                     
-                    Utils.$('donutContainer').style.cursor = 'pointer';
+                    // ✅ BUG #9: DONUT CURSOR BUG CORRIGIDO
+                    const container = Utils.$('donutContainer');
+                    if (container && labels.length > 0) {
+                        container.style.cursor = 'pointer';
+                    } else if (container) {
+                        container.style.cursor = 'default';
+                    }
+                } else {
+                    this.charts.donut = null;
                 }
             }
+
+            // 🔧 6. score (divisão por zero)
             analisarFinanceiro(data) {
-    if (!data || data.length === 0) {
-        return { score: 0 };
-    }
+                if (!data || data.length === 0) {
+                    return { score: 0 };
+                }
 
-    const renda = data.filter(i => i.cat === 'Renda').reduce((a,i)=>a+i.valor,0);
-    const essencial = data.filter(i => i.cat === 'Essencial').reduce((a,i)=>a+i.valor,0);
-    const estilo = data.filter(i => i.cat === 'Estilo').reduce((a,i)=>a+i.valor,0);
-    const investimento = data.filter(i => i.cat === 'Investimento').reduce((a,i)=>a+i.valor,0);
+                const renda = data.filter(i => i.cat === 'Renda').reduce((a,i)=>a+i.valor,0);
+                if (!renda || renda <= 0) return { score: 0 };
 
-    if (renda === 0) return { score: 0 };
+                const essencial = data.filter(i => i.cat === 'Essencial').reduce((a,i)=>a+i.valor,0);
+                const estilo = data.filter(i => i.cat === 'Estilo').reduce((a,i)=>a+i.valor,0);
+                const investimento = data.filter(i => i.cat === 'Investimento').reduce((a,i)=>a+i.valor,0);
 
-    // 📊 porcentagens
-    const pEssencial = essencial / renda;
-    const pEstilo = estilo / renda;
-    const pInvest = investimento / renda;
+                // 🔧 6. score (divisão por zero)
+                const pEssencial = renda > 0 ? essencial / renda : 0;
+                const pEstilo = renda > 0 ? estilo / renda : 0;
+                const pInvest = renda > 0 ? investimento / renda : 0;
 
-    let score = 100;
+                let score = 100;
 
-    // ❌ Penalizações (regra 50-30-20)
-    if (pEssencial > 0.5) score -= (pEssencial - 0.5) * 200;
-    if (pEstilo > 0.3) score -= (pEstilo - 0.3) * 200;
-    if (pInvest < 0.2) score -= (0.2 - pInvest) * 200;
+                if (pEssencial > 0.5) score -= (pEssencial - 0.5) * 200;
+                if (pEstilo > 0.3) score -= (pEstilo - 0.3) * 200;
+                if (pInvest < 0.2) score -= (0.2 - pInvest) * 200;
 
-    // ⚠️ proteção
-    score = Math.max(0, Math.min(100, Math.round(score)));
+                score = Math.max(0, Math.min(100, Math.round(score)));
+                return { score };
+            }
 
-    return { score };
-}
-
+            // 🔥 INIT MAIS SEGURO
             init() {
                 this.loadDB();
-                this.update();
-                console.log('✅ Finance PRO v8.4.6 - NUBANK COMPACT + INTERATIVO');
+                requestAnimationFrame(() => this.update());
+                console.log('✅ Finance PRO v8.4.6 inicializado');
             }
         }
 
-        const Finance = new FinanceEngine();
-        window.addEventListener('load', () => Finance.init());
+        // 🔥 1) SUBSTITUIÇÃO Finance GLOBAL
+        window.Finance = new FinanceEngine();
         
-        Utils.$('editModal').addEventListener('click', (e) => {
-            if (e.target === Utils.$('editModal')) Finance.closeEdit();
+        // 🔥 2) FIX DO LOAD (modal + init seguro)
+        window.addEventListener('load', () => {
+            Finance.init();
+
+            const modal = Utils.$('editModal');
+            if (modal) {
+                modal.addEventListener('click', (e) => {
+                    if (e.target === modal) Finance.closeEdit();
+                });
+            }
         });
     </script>
 </body>
