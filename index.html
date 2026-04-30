@@ -494,7 +494,7 @@ nextMonth() {
             
             if (confirmacao) {
                 this.db[mes] = [];
-                localStorage.setItem(`finpro_v${this.schemaVersion}_${mes}`, JSON.stringify([]));
+                this.save();
                 this.update();
                 alert(`Dados de ${nomeMes} apagados com sucesso!`);
             }
