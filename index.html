@@ -279,68 +279,48 @@ Data	Valor	ID	Descrição
         };
 
         // 🔥 PARSER NUBANK ULTRA-PRECISE v8.4.6
-        class NubankParser {
-            static classify(descricao) {
-                const text = descricao.toLowerCase();
-                
-                const rendaKeywords = [
-                    'pix recebido', 'transferência recebida', 'ted recebida', 'depósito',
-                    'salário', 'comissão', 'freelance', 'freelancer', 'reembolso',
-                    'cashback', 'restituição', 'dividendos', 'juros recebidos',
-                    'pagamento recebido', 'crédito recebido'
-                ];
-                
-                for (let keyword of rendaKeywords) {
-                    if (text.includes(keyword)) return 'Renda';
-                }
-                
-                const essencialKeywords = [
-                    'carrefour', 'assai', 'atacadão', 'extra', 'pão de açúcar', 'mercado', 'supermercado',
-                    'energia', 'luz', 'água', 'gás', 'internet', 'vivo', 'claro', 'tim',
-                    'posto', 'gasolina', 'combustível', 'farmácia', 'drogaria', 'consulta', 'hospital'
-                ];
-                
-                for (let keyword of essencialKeywords) {
-                    if (text.includes(keyword)) return 'Essencial';
-                }
-                
-                const estiloKeywords = [
-                    'ifood', 'uber eats', 'restaurante', 'lanchonete', 'hamburgueria', 'pizzaria', 'bar',
-                    'netflix', 'spotify', 'amazon prime', 'disney+', 'hbo max', 'youtube premium',
-                    'shopee', 'shein', 'aliexpress', 'amazon', 'zara', 'renner', 'nike',
-                    'steam', 'playstation', 'xbox', 'cinema', 'shows', 'uber', '99'
-                ];
-                
-                for (let keyword of estiloKeywords) {
-                    if (text.includes(keyword)) return 'Estilo';
-                }
-                
-                return 'Outros';
-            }
+class NubankParser {
+    static classify(desc, valor = 0) {
+        const text = desc.toUpperCase();
+
+        // 💰 ENTRADAS (PRIORIDADE MÁXIMA)
+        if (text.includes('TRANSFERÊNCIA RECEBIDA') || text.includes('PIX RECEBIDO')) {
+            return 'Renda';
         }
 
-        class FinanceEngine {
-            constructor() {
-                this.db = {}; 
-                this.charts = { donut: null, bar: null };
-                this.currentFilter = 'Todos';
-                this.currentMonth = new Date().toISOString().slice(0,7);
-                this.catColors = { 
-                    Renda: '#10b981', Essencial: '#3b82f6', Estilo: '#f59e0b', 
-                    Outros: '#64748b', Investimento: '#8b5cf6' 
-                };
-                this.schemaVersion = '8.4.6';
-                this.editingId = null;
-            }
+        // 💰 IFOOD (SEMPRE RENDA quando entrada)
+        if (text.includes('IFOOD') && valor > 0) {
+            return 'Renda';
+        }
 
-            loadDB() {
-                try {
-                    const raw = localStorage.getItem(`finpro_v${this.schemaVersion}`);
-                    this.db = raw ? JSON.parse(raw) : {};
-                } catch(e) {
-                    this.db = {};
-                }
-            }
+        // ❌ SAÍDAS
+        if (valor < 0) {
+
+            // 🏠 ESSENCIAL
+            if (
+                text.includes('MERCADO') ||
+                text.includes('CARREFOUR') ||
+                text.includes('POSTO') ||
+                text.includes('DUTRAO') ||
+                text.includes('DROGARIA') ||
+                text.includes('TELEFONICA') ||
+                text.includes('INTERNET') ||
+                text.includes('SEGURO')
+            ) return 'Essencial';
+
+            // 🍔 ESTILO
+            if (
+                text.includes('IFD*') ||
+                text.includes('IFOOD CLUB') ||
+                text.includes('ESFIHARIA') ||
+                text.includes('SUSHI') ||
+                text.includes('ADEGA')
+            ) return 'Estilo';
+        }
+
+        return 'Outros';
+    }
+}
 getListaMeses() {
     // Pega os meses que já têm dados
     const mesesComDados = Object.keys(this.db).filter(k => this.db[k] && this.db[k].length > 0);
